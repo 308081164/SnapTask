@@ -1,0 +1,59 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nickel-org/nickel.rs/master/schemas/tauri.conf.schema.json",
+  "productName": "SnapTask",
+  "version": "0.1.0",
+  "identifier": "com.snaptask.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "SnapTask",
+        "width": 1200,
+        "height": 800,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "label": "main"
+      },
+      {
+        "title": "SnapTask Card",
+        "width": 380,
+        "height": 600,
+        "resizable": false,
+        "fullscreen": false,
+        "alwaysOnTop": true,
+        "transparent": true,
+        "decorations": false,
+        "skipTaskbar": true,
+        "visible": false,
+        "label": "floating-card",
+        "url": "floating-card.html"
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "trayIcon": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true,
+      "id": "main-tray"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

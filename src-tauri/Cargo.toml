@@ -1,0 +1,33 @@
+[package]
+name = "snaptask"
+version = "0.1.0"
+description = "SnapTask - AI-powered task management with screenshot capture"
+authors = ["SnapTask Team"]
+edition = "2021"
+
+[lib]
+name = "snaptask_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "notification"] }
+tauri-plugin-notification = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-global-shortcut = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "multipart"] }
+rusqlite = { version = "0.31", features = ["bundled"] }
+uuid = { version = "1", features = ["v7"] }
+chrono = { version = "0.4", features = ["serde"] }
+base64 = "0.22"
+image = "0.25"
+dirs = "5"
+log = "0.4"
+env_logger = "0.11"
+anyhow = "1"

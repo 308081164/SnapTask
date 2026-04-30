@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { TaskPriority } from '@/types';
+import { TaskPriority, SourceType } from '@/types';
 import { useTaskStore } from '@/stores/taskStore';
 import { useClientStore } from '@/stores/clientStore';
 import { useProjectStore } from '@/stores/projectStore';
@@ -19,7 +19,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, onCreated }
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<TaskPriority>('medium');
+  const [priority, setPriority] = useState<TaskPriority>(TaskPriority.Medium);
   const [deadline, setDeadline] = useState('');
   const [clientId, setClientId] = useState('');
   const [projectId, setProjectId] = useState('');
@@ -38,7 +38,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, onCreated }
 
     setSubmitting(true);
     setError('');
-
     try {
       const tags = tagsInput
         .split(',')
@@ -53,13 +52,13 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, onCreated }
         client_id: clientId || null,
         project_id: projectId || null,
         tags,
-        source: 'manual' as const,
+        source: SourceType.Manual,
       });
 
       // Reset form
       setTitle('');
       setDescription('');
-      setPriority('medium');
+      setPriority(TaskPriority.Medium);
       setDeadline('');
       setClientId('');
       setProjectId('');
@@ -75,7 +74,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, onCreated }
   const handleCancel = () => {
     setTitle('');
     setDescription('');
-    setPriority('medium');
+    setPriority(TaskPriority.Medium);
     setDeadline('');
     setClientId('');
     setProjectId('');
@@ -85,7 +84,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ isOpen, onClose, onCreated }
   };
 
   return (
-    <div className={styles.overlay} onClick={onCancel}>
+    <div className={styles.overlay} onClick={handleCancel}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h2 className={styles.title}>新建任务</h2>
 

@@ -1,0 +1,52 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  color: var(--tag-color, var(--color-text-secondary));
+  background: var(--tag-bg, var(--color-bg-secondary));
+}
+
+.sm {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.md {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.solid {
+  border: none;
+}
+
+.outline {
+  border: 1px solid var(--tag-color, var(--color-border));
+  background: transparent;
+}
+
+.removeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  border-radius: 3px;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+  padding: 0;
+}
+
+.removeBtn:hover {
+  opacity: 1;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Trash2, Calendar, User, Folder, Tag, Clock, Paperclip } from 'lucide-react';
-import type { Task, TaskStatus, TaskPriority } from '@/types';
+import { TaskStatus, TaskPriority } from '@/types';
+import type { Task } from '@/types';
 import { useTaskStore } from '@/stores/taskStore';
 import { useClientStore } from '@/stores/clientStore';
 import { useProjectStore } from '@/stores/projectStore';
@@ -18,10 +19,7 @@ interface TaskDetailProps {
 }
 
 export const TaskDetail: React.FC<TaskDetailProps> = ({
-  task,
-  isOpen,
-  onClose,
-  onUpdated,
+  task, isOpen, onClose, onUpdated,
 }) => {
   const { updateTask, deleteTask } = useTaskStore();
   const { clients } = useClientStore();
@@ -29,7 +27,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
-  const [editPriority, setEditPriority] = useState<TaskPriority>('medium');
+  const [editPriority, setEditPriority] = useState<TaskPriority>(TaskPriority.Medium);
   const [editDeadline, setEditDeadline] = useState('');
   const [editClientId, setEditClientId] = useState('');
   const [editProjectId, setEditProjectId] = useState('');
@@ -64,7 +62,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
 
   const client = clients.find((c) => c.id === task.client_id);
   const project = projects.find((p) => p.id === task.project_id);
-  const overdue = task.deadline && isOverdue(task.deadline) && task.status !== 'done';
+  const overdue = task.deadline && isOverdue(task.deadline) && task.status !== TaskStatus.Done;
 
   const handleSave = async () => {
     try {
@@ -109,60 +107,32 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
 
   return (
     <>
-      {/* Overlay */}
       <div className={styles.overlay} onClick={onClose} />
-
-      {/* Drawer */}
       <div className={styles.drawer}>
-        {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <PriorityBadge priority={task.priority} size="md" />
-            {task.source === 'screenshot' && (
-              <span className={styles.sourceBadge}>
-                <Paperclip size={12} />
-                截屏来源
-              </span>
-            )}
           </div>
           <button className={styles.closeBtn} onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        {/* Content */}
         <div className={styles.content}>
           {isEditing ? (
             <div className={styles.editForm}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>标题</label>
-                <input
-                  className={styles.input}
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder="任务标题"
-                />
+                <input className={styles.input} value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder="任务标题" />
               </div>
-
               <div className={styles.formGroup}>
                 <label className={styles.label}>描述</label>
-                <textarea
-                  className={styles.textarea}
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  placeholder="任务描述"
-                  rows={4}
-                />
+                <textarea className={styles.textarea} value={editDescription} onChange={(e) => setEditDescription(e.target.value)} placeholder="任务描述" rows={4} />
               </div>
-
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>优先级</label>
-                  <select
-                    className={styles.select}
-                    value={editPriority}
-                    onChange={(e) => setEditPriority(e.target.value as TaskPriority)}
-                  >
+                  <select className={styles.select} value={editPriority} onChange={(e) => setEditPriority(e.target.value as TaskPriority)}>
                     <option value="low">低</option>
                     <option value="medium">中</option>
                     <option value="high">高</option>
@@ -171,112 +141,62 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>截止日期</label>
-                  <input
-                    className={styles.input}
-                    type="datetime-local"
-                    value={editDeadline}
-                    onChange={(e) => setEditDeadline(e.target.value)}
-                  />
+                  <input className={styles.input} type="datetime-local" value={editDeadline} onChange={(e) => setEditDeadline(e.target.value)} />
                 </div>
               </div>
-
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>客户</label>
-                  <select
-                    className={styles.select}
-                    value={editClientId}
-                    onChange={(e) => setEditClientId(e.target.value)}
-                  >
+                  <select className={styles.select} value={editClientId} onChange={(e) => setEditClientId(e.target.value)}>
                     <option value="">无</option>
-                    {clients.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
+                    {clients.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
                   </select>
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>项目</label>
-                  <select
-                    className={styles.select}
-                    value={editProjectId}
-                    onChange={(e) => setEditProjectId(e.target.value)}
-                  >
+                  <select className={styles.select} value={editProjectId} onChange={(e) => setEditProjectId(e.target.value)}>
                     <option value="">无</option>
-                    {projects.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
+                    {projects.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
                   </select>
                 </div>
               </div>
-
               <div className={styles.formGroup}>
                 <label className={styles.label}>标签（逗号分隔）</label>
-                <input
-                  className={styles.input}
-                  value={editTags}
-                  onChange={(e) => setEditTags(e.target.value)}
-                  placeholder="标签1, 标签2"
-                />
+                <input className={styles.input} value={editTags} onChange={(e) => setEditTags(e.target.value)} placeholder="标签1, 标签2" />
               </div>
-
               <div className={styles.formActions}>
-                <Button variant="primary" onClick={handleSave}>
-                  保存
-                </Button>
-                <Button variant="ghost" onClick={() => setIsEditing(false)}>
-                  取消
-                </Button>
+                <Button variant="primary" onClick={handleSave}>保存</Button>
+                <Button variant="ghost" onClick={() => setIsEditing(false)}>取消</Button>
               </div>
             </div>
           ) : (
             <div className={styles.viewMode}>
               <h2 className={styles.title}>{task.title}</h2>
-
-              {task.description && (
-                <p className={styles.description}>{task.description}</p>
-              )}
-
-              {/* Status */}
+              {task.description && <p className={styles.description}>{task.description}</p>}
               <div className={styles.statusSection}>
                 <span className={styles.sectionLabel}>状态</span>
                 <div className={styles.statusButtons}>
-                  {(['todo', 'in_progress', 'done'] as TaskStatus[]).map((status) => (
-                    <button
-                      key={status}
-                      className={`${styles.statusBtn} ${task.status === status ? styles.statusActive : ''}`}
-                      onClick={() => handleStatusChange(status)}
-                    >
-                      {status === 'todo' && '待办'}
-                      {status === 'in_progress' && '进行中'}
-                      {status === 'done' && '已完成'}
+                  {([TaskStatus.Todo, TaskStatus.InProgress, TaskStatus.Done] as TaskStatus[]).map((status) => (
+                    <button key={status} className={`${styles.statusBtn} ${task.status === status ? styles.statusActive : ''}`} onClick={() => handleStatusChange(status)}>
+                      {status === TaskStatus.Todo && '待办'}
+                      {status === TaskStatus.InProgress && '进行中'}
+                      {status === TaskStatus.Done && '已完成'}
                     </button>
                   ))}
                 </div>
               </div>
-
-              {/* Meta Info */}
               <div className={styles.metaGrid}>
                 {task.deadline && (
                   <div className={`${styles.metaItem} ${overdue ? styles.metaOverdue : ''}`}>
                     <Calendar size={14} />
                     <div>
                       <span className={styles.metaLabel}>截止日期</span>
-                      <span className={styles.metaValue}>
-                        {formatDate(task.deadline)}
-                        {formatDeadlineCountdown(task.deadline) && (
-                          <span className={styles.countdown}>
-                            {formatDeadlineCountdown(task.deadline)}
-                          </span>
-                        )}
+                      <span className={styles.metaValue}>{formatDate(task.deadline)}
+                        {formatDeadlineCountdown(task.deadline) && <span className={styles.countdown}>{formatDeadlineCountdown(task.deadline)}</span>}
                       </span>
                     </div>
                   </div>
                 )}
-
                 {client && (
                   <div className={styles.metaItem}>
                     <User size={14} />
@@ -286,7 +206,6 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
                     </div>
                   </div>
                 )}
-
                 {project && (
                   <div className={styles.metaItem}>
                     <Folder size={14} />
@@ -296,7 +215,6 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
                     </div>
                   </div>
                 )}
-
                 <div className={styles.metaItem}>
                   <Clock size={14} />
                   <div>
@@ -305,32 +223,14 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
                   </div>
                 </div>
               </div>
-
-              {/* Tags */}
               {task.tags.length > 0 && (
                 <div className={styles.tagsSection}>
                   <span className={styles.sectionLabel}>标签</span>
                   <div className={styles.tagsList}>
-                    {task.tags.map((tag) => (
-                      <TagComponent key={tag} size="md">{tag}</TagComponent>
-                    ))}
+                    {task.tags.map((tag) => (<TagComponent key={tag} size="md">{tag}</TagComponent>))}
                   </div>
                 </div>
               )}
-
-              {/* Screenshot */}
-              {task.screenshot_url && (
-                <div className={styles.screenshotSection}>
-                  <span className={styles.sectionLabel}>关联截图</span>
-                  <img
-                    className={styles.screenshot}
-                    src={task.screenshot_url}
-                    alt="关联截图"
-                  />
-                </div>
-              )}
-
-              {/* Change History */}
               {task.change_history && task.change_history.length > 0 && (
                 <div className={styles.historySection}>
                   <span className={styles.sectionLabel}>变更历史</span>
@@ -343,9 +243,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
                           <span className={styles.arrow}>&rarr;</span>
                           <span className={styles.newValue}>{record.new_value || '(空)'}</span>
                         </span>
-                        <span className={styles.historyTime}>
-                          {formatRelative(record.changed_at)}
-                        </span>
+                        <span className={styles.historyTime}>{formatRelative(record.changed_at)}</span>
                       </div>
                     ))}
                   </div>
@@ -354,28 +252,17 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
             </div>
           )}
         </div>
-
-        {/* Footer */}
         {!isEditing && (
           <div className={styles.footer}>
-            <Button variant="secondary" onClick={() => setIsEditing(true)}>
-              编辑
-            </Button>
+            <Button variant="secondary" onClick={() => setIsEditing(true)}>编辑</Button>
             {showDeleteConfirm ? (
               <div className={styles.deleteConfirm}>
                 <span className={styles.deleteText}>确认删除？</span>
-                <Button variant="danger" size="sm" onClick={handleDelete}>
-                  删除
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setShowDeleteConfirm(false)}>
-                  取消
-                </Button>
+                <Button variant="danger" size="sm" onClick={handleDelete}>删除</Button>
+                <Button variant="ghost" size="sm" onClick={() => setShowDeleteConfirm(false)}>取消</Button>
               </div>
             ) : (
-              <Button variant="ghost" onClick={() => setShowDeleteConfirm(true)}>
-                <Trash2 size={14} />
-                删除
-              </Button>
+              <Button variant="ghost" onClick={() => setShowDeleteConfirm(true)}><Trash2 size={14} />删除</Button>
             )}
           </div>
         )}

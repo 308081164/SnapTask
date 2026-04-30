@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MainLayout } from '@/components/Layout/MainLayout';
-import { TaskBoardPage } from '@/pages/TaskBoardPage';
-import { TimelinePage } from '@/pages/TimelinePage';
-import { CalendarPage } from '@/pages/CalendarPage';
-import { SettingsPage } from '@/pages/SettingsPage';
-import { FloatingCardPage } from '@/pages/FloatingCardPage';
+import TaskBoardPage from '@/pages/TaskBoardPage';
+import TimelinePage from '@/pages/TimelinePage';
+import CalendarPage from '@/pages/CalendarPage';
+import SettingsPage from '@/pages/SettingsPage';
+import FloatingCardPage from '@/pages/FloatingCardPage';
 import { ErrorBoundary } from '@/components/Common/ErrorBoundary';
 import { ReminderToast } from '@/components/Reminder/ReminderToast';
 import { useTaskStore } from '@/stores/taskStore';
 import { useAIStore } from '@/stores/aiStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { useReminderStore } from '@/stores/reminderStore';
 import { registerEventListeners } from '@/lib/tauri';
 import { initTheme } from '@/utils/theme';
+import { TaskStatus } from '@/types';
 import type { ScreenshotEvent, ReminderEvent, SyncEvent } from '@/types';
 
 const App: React.FC = () => {
@@ -59,7 +59,9 @@ const App: React.FC = () => {
       },
     });
 
-    return cleanup;
+    return () => {
+      if (typeof cleanup === 'function') cleanup();
+    };
   }, [isTauri]);
 
   const handleReminderDismiss = useCallback(() => {
@@ -69,7 +71,6 @@ const App: React.FC = () => {
   const handleReminderViewDetail = useCallback(
     (task: import('@/types').Task) => {
       setActiveReminder(null);
-      // Navigate to task detail - would use router navigation
       console.log('Navigate to task:', task.id);
     },
     []
@@ -78,7 +79,7 @@ const App: React.FC = () => {
   const handleReminderMarkDone = useCallback(
     (taskId: string) => {
       const { updateTaskStatus } = useTaskStore.getState();
-      updateTaskStatus(taskId, 'done');
+      updateTaskStatus(taskId, TaskStatus.Done);
     },
     []
   );

@@ -1,5 +1,4 @@
 use anyhow::{Context, Result};
-use image::ImageFormat;
 use std::io::Cursor;
 use std::process::Command;
 
@@ -77,13 +76,13 @@ pub fn compress_image(data: &[u8], quality: u8) -> Result<Vec<u8>> {
     };
 
     let (w, h) = rgb_img.dimensions();
-    let new_w = (w as f64 * scale) as u32;
-    let new_h = (h as f64 * scale) as u32;
+    let new_w = (w as f64 * scale).max(1.0) as u32;
+    let new_h = (h as f64 * scale).max(1.0) as u32;
 
     let resized = image::imageops::resize(
         &rgb_img,
-        new_w.max(1),
-        new_h.max(1),
+        new_w,
+        new_h,
         image::imageops::FilterType::Lanczos3,
     );
 
@@ -95,8 +94,8 @@ pub fn compress_image(data: &[u8], quality: u8) -> Result<Vec<u8>> {
     );
     encoder.write_image(
         resized.as_raw(),
-        new_w.max(1),
-        new_h.max(1),
+        new_w,
+        new_h,
         image::ExtendedColorType::Rgb8,
     ).context("Failed to encode compressed PNG")?;
 
@@ -182,7 +181,7 @@ fn capture_window_macos() -> Result<Vec<u8>> {
 
 #[cfg(target_os = "windows")]
 fn capture_screen_windows() -> Result<Vec<u8>> {
-    let tmp_path = format!("{}\\snaptask_screen_{}.png", std::env::TEMP_DIR, uuid::Uuid::now_v7());
+    let tmp_path = format!("{}\\snaptask_screen_{}.png", std::env::temp_dir().to_string_lossy().to_string(), uuid::Uuid::now_v7());
     let tmp_path = tmp_path.replace("/", "\\");
 
     let ps_script = r#"
@@ -217,7 +216,7 @@ $bitmap.Dispose()
 
 #[cfg(target_os = "windows")]
 fn capture_area_windows(x: i32, y: i32, width: i32, height: i32) -> Result<Vec<u8>> {
-    let tmp_path = format!("{}\\snaptask_area_{}.png", std::env::TEMP_DIR, uuid::Uuid::now_v7());
+    let tmp_path = format!("{}\\snaptask_area_{}.png", std::env::temp_dir().to_string_lossy().to_string(), uuid::Uuid::now_v7());
     let tmp_path = tmp_path.replace("/", "\\");
 
     let ps_script = format!(
@@ -254,7 +253,7 @@ $bitmap.Dispose()
 
 #[cfg(target_os = "windows")]
 fn capture_window_windows() -> Result<Vec<u8>> {
-    let tmp_path = format!("{}\\snaptask_window_{}.png", std::env::TEMP_DIR, uuid::Uuid::now_v7());
+    let tmp_path = format!("{}\\snaptask_window_{}.png", std::env::temp_dir().to_string_lossy().to_string(), uuid::Uuid::now_v7());
     let tmp_path = tmp_path.replace("/", "\\");
 
     let ps_script = r#"

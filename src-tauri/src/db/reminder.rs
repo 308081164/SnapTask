@@ -55,7 +55,7 @@ pub fn list_reminders(conn: &Connection) -> SqlResult<Vec<Reminder>> {
 
 /// 更新提醒状态
 pub fn update_reminder_status(conn: &Connection, id: &str, status: &str) -> SqlResult<Reminder> {
-    let fired_at = if status == "fired" {
+    let _fired_at = if status == "fired" {
         "datetime('now')"
     } else {
         "NULL"

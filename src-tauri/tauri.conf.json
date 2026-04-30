@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/nickel-org/nickel.rs/master/schemas/tauri.conf.schema.json",
   "productName": "SnapTask",
   "version": "0.1.0",
-  "identifier": "com.snaptask.app",
+  "identifier": "com.snaptask.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",

@@ -229,13 +229,13 @@ pub fn update_task_status(conn: &Connection, task_id: &str, new_status: &str) ->
         return Err(rusqlite::Error::QueryReturnedNoRows);
     }
 
-    let completed_at = if target == TaskStatus::Completed {
+    let _completed_at = if target == TaskStatus::Completed {
         Some("datetime('now')".to_string())
     } else {
         task.completed_at.clone()
     };
 
-    let archived_at = if target == TaskStatus::Archived {
+    let _archived_at = if target == TaskStatus::Archived {
         Some("datetime('now')".to_string())
     } else {
         task.archived_at.clone()

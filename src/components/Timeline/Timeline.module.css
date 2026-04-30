@@ -1,0 +1,106 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.groupLine {
+  width: 2px;
+  height: 20px;
+  background: var(--color-border);
+  border-radius: 1px;
+}
+
+.groupLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.groupCount {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-secondary);
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 20px;
+  border-left: 2px solid var(--color-border);
+  margin-left: 1px;
+}
+
+.taskItem {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  position: relative;
+}
+
+.taskItem:hover {
+  background: var(--color-bg-secondary);
+}
+
+.taskDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 6px;
+  position: absolute;
+  left: -5px;
+}
+
+.taskContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.taskHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskDate {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.taskTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.taskDesc {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin: 0;
+  line-height: 1.5;
+}

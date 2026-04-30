@@ -1,0 +1,115 @@
+name: Auto Update SnapTask
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - 'server/**'
+      - '.github/workflows/build.yml'
+      - '.github/workflows/release.yml'
+
+env:
+  VITE_AI_API_KEY: ${{ secrets.VITE_AI_API_KEY }}
+  TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+  TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+jobs:
+  # Build and publish a draft release for auto-update
+  auto-update:
+    permissions:
+      contents: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: '--target universal-apple-darwin'
+          - platform: windows-latest
+            args: ''
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get version from tauri.conf.json
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Check if draft release already exists
+        id: check-release
+        shell: bash
+        run: |
+          EXISTING=$(gh release view "v${{ steps.version.outputs.version }}" --json isDraft -q '.isDraft' 2>/dev/null || echo "not_found")
+          echo "exists=$EXISTING" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust stable
+        if: steps.check-release.outputs.exists != 'true'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust cache
+        if: steps.check-release.outputs.exists != 'true'
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install Node.js 20
+        if: steps.check-release.outputs.exists != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install frontend dependencies
+        if: steps.check-release.outputs.exists != 'true'
+        run: npm ci
+
+      - name: Build frontend
+        if: steps.check-release.outputs.exists != 'true'
+        run: npm run build
+
+      - name: Install system dependencies (Ubuntu only)
+        if: matrix.platform == 'ubuntu-latest' && steps.check-release.outputs.exists != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Build Tauri application (draft release)
+        if: steps.check-release.outputs.exists != 'true'
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v${{ steps.version.outputs.version }}
+          releaseName: 'SnapTask v${{ steps.version.outputs.version }}'
+          releaseBody: |
+            ## SnapTask v${{ steps.version.outputs.version }}
+
+            > **Note**: This is an auto-generated draft release from the main branch.
+
+            ### Auto-Update
+            This release supports Tauri's built-in updater. Existing installations will be notified and can update automatically.
+
+            ### Installation
+            - **macOS**: Download the `.dmg` file
+            - **Windows**: Download the `.exe` (NSIS) or `.msi` file
+
+            ---
+            *Built automatically from main branch commit ${{ github.sha }}*
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}

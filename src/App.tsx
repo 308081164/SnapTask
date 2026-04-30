@@ -43,7 +43,9 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!isTauri) return;
 
-    const cleanup = registerEventListeners({
+    let cleanupFn: (() => void) | undefined;
+
+    registerEventListeners({
       screenshot: (event: ScreenshotEvent) => {
         const { analyzeScreenshot } = useAIStore.getState();
         analyzeScreenshot(event.image_base64);
@@ -57,10 +59,12 @@ const App: React.FC = () => {
       sync: (event: SyncEvent) => {
         console.log('Sync event:', event);
       },
+    }).then((cleanup) => {
+      cleanupFn = cleanup;
     });
 
     return () => {
-      if (typeof cleanup === 'function') cleanup();
+      if (cleanupFn) cleanupFn();
     };
   }, [isTauri]);
 

@@ -58,9 +58,6 @@ pub fn run() {
     // 创建提醒调度器
     let reminder_scheduler = ReminderScheduler::new();
 
-    // 创建截图缓存
-    let screenshot_cache = ScreenshotCache(Mutex::new(None));
-
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_shell::init())

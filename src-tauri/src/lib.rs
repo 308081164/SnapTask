@@ -4,22 +4,10 @@ pub mod ai;
 pub mod reminder;
 pub mod sync;
 pub mod commands;
-
 use std::sync::{Arc, Mutex};
-use tauri::{
-    AppHandle,
-    Manager,
-    Emitter,
-};
+use tauri::Listener;
 use rusqlite::Connection;
 use log::{info, error};
-
-use db::init;
-use db::task as task_db;
-use db::client as client_db;
-use db::project as project_db;
-use db::sync as sync_db;
-
 use commands::task_commands::{DbState, create_task, get_task, update_task, delete_task, list_tasks, search_tasks, update_task_status, get_upcoming_tasks};
 use commands::client_commands::{create_client, list_clients, update_client, delete_client};
 use commands::project_commands::{create_project, list_projects, update_project, delete_project};
@@ -27,37 +15,27 @@ use commands::ai_commands::{analyze_screenshot, confirm_analysis, get_ai_config,
 use commands::reminder_commands::{create_reminder, list_reminders, update_reminder, delete_reminder};
 use commands::sync_commands::{SyncEngineState, trigger_sync, get_sync_status, get_sync_config, update_sync_config};
 use commands::screenshot_commands::{ScreenshotCache, trigger_screenshot, get_screenshot};
-
 use sync::engine::SyncEngine;
 use reminder::scheduler::ReminderScheduler;
-
 /// Tauri 应用入口
 pub fn run() {
     // 初始化日志
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .init();
-
     info!("SnapTask starting...");
-
     // 初始化数据库
-    let db_path = init::get_database_path();
+    let db_path = db::init::get_database_path();
     info!("Database path: {}", db_path);
-
     let conn = Connection::open(&db_path)
         .expect("Failed to open database");
-
-    init::init_database(&conn)
+    db::init::init_database(&conn)
         .expect("Failed to initialize database");
-
     info!("Database initialized successfully");
-
     // 创建同步引擎
     let sync_engine = Arc::new(SyncEngine::new());
     sync_engine.load_config(&conn);
-
     // 创建提醒调度器
     let reminder_scheduler = ReminderScheduler::new();
-
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_shell::init())
@@ -68,26 +46,20 @@ pub fn run() {
         .manage(ScreenshotCache(Mutex::new(None)))
         .setup(move |app| {
             info!("Tauri app setup starting...");
-
             let handle = app.handle().clone();
-
             // 注册全局热键
             if let Err(e) = screenshot::hotkey::register_hotkeys(&handle) {
                 error!("Failed to register global hotkeys: {}", e);
             }
-
             // 设置同步引擎的 AppHandle
             sync_engine.set_app_handle(handle.clone());
-
             // 设置提醒调度器的 AppHandle
             reminder_scheduler.set_app_handle(handle.clone());
-
             // 启动提醒调度器
             reminder_scheduler.start();
-
             // 启动同步引擎（如果已配置）
             {
-                let db_path = init::get_database_path();
+                let db_path = db::init::get_database_path();
                 let conn = Connection::open(&db_path)
                     .expect("Failed to open database for sync config");
                 let config = sync::config::SyncConfig::from_db(&conn);
@@ -98,14 +70,12 @@ pub fn run() {
                     info!("Sync engine not started (not configured)");
                 }
             }
-
             // 监听截屏触发事件
             let handle_for_screenshot = handle.clone();
             app.listen("screenshot:trigger", move |_event| {
                 info!("Received screenshot:trigger event");
                 // 截屏事件由前端处理，后端只负责捕获
             });
-
             info!("Tauri app setup completed");
             Ok(())
         })

@@ -1,14 +1,12 @@
-use tauri::{AppHandle, Emitter, State};
+use tauri::State;
 use crate::ai::models::*;
 use crate::ai::engine;
-use crate::ai::prompts;
 use crate::db::models::*;
 use crate::db::task as task_db;
 use crate::db::client as client_db;
 use crate::db::project as project_db;
 use crate::commands::task_commands::DbState;
 use log::{info, error};
-
 /// 分析截屏（接收 base64 图片，返回分析结果）
 #[tauri::command]
 pub async fn analyze_screenshot(
@@ -20,51 +18,41 @@ pub async fn analyze_screenshot(
         &base64::engine::general_purpose::STANDARD,
         &image_base64,
     ).map_err(|e| format!("Failed to decode base64 image: {}", e))?;
-
-    // 获取数据库连接
-    let conn = state.0.lock().map_err(|e| format!("Failed to acquire database lock: {}", e))?;
-
-    // 获取 AI 配置
-    let config = engine::get_ai_config_from_db(&conn);
-
-    if config.api_key.is_empty() {
-        return Err("AI API Key 未配置，请在设置中配置 DashScope API Key".to_string());
-    }
-
-    // 构建分析上下文
-    let now = chrono::Local::now();
-    let active_clients = client_db::list_clients(&conn)
-        .unwrap_or_default()
-        .iter()
-        .map(|c| c.name.clone())
-        .collect();
-
-    let active_projects = project_db::list_projects(&conn)
-        .unwrap_or_default()
-        .iter()
-        .map(|p| p.name.clone())
-        .collect();
-
-    let context = AnalysisContext {
-        current_date: now.format("%Y-%m-%d").to_string(),
-        current_time: now.format("%H:%M").to_string(),
-        active_clients,
-        active_projects,
+    // 获取 AI 配置和上下文 (block scope to drop conn before .await)
+    let (config, context) = {
+        let conn = state.0.lock().map_err(|e| format!("Failed to acquire database lock: {}", e))?;
+        let config = engine::get_ai_config_from_db(&conn);
+        if config.api_key.is_empty() {
+            return Err("AI API Key 未配置，请在设置中配置 DashScope API Key".to_string());
+        }
+        // 构建分析上下文
+        let now = chrono::Local::now();
+        let active_clients = client_db::list_clients(&conn)
+            .unwrap_or_default()
+            .iter()
+            .map(|c| c.name.clone())
+            .collect();
+        let active_projects = project_db::list_projects(&conn)
+            .unwrap_or_default()
+            .iter()
+            .map(|p| p.name.clone())
+            .collect();
+        let context = AnalysisContext {
+            current_date: now.format("%Y-%m-%d").to_string(),
+            current_time: now.format("%H:%M").to_string(),
+            active_clients,
+            active_projects,
+        };
+        // conn is dropped here
+        (config, context)
     };
-
-    // 释放数据库锁
-    drop(conn);
-
     // 调用 AI 分析
     let result = engine::analyze_screenshot(&image_data, &context, &config)
         .await
         .map_err(|e| format!("AI 分析失败: {}", e))?;
-
     info!("Screenshot analysis completed: {} tasks found", result.tasks.len());
-
     Ok(result)
 }
-
 /// 确认分析结果并创建任务
 #[tauri::command]
 pub fn confirm_analysis(
@@ -75,7 +63,6 @@ pub fn confirm_analysis(
 ) -> Result<Vec<Task>, String> {
     let conn = state.0.lock().map_err(|e| format!("Failed to acquire database lock: {}", e))?;
     let mut created_tasks = Vec::new();
-
     for extracted in &tasks {
         // 尝试匹配客户
         let client_id = if let Some(ref client_name) = extracted.client_name {
@@ -90,7 +77,6 @@ pub fn confirm_analysis(
         } else {
             None
         };
-
         let input = CreateTaskInput {
             title: extracted.title.clone(),
             description: extracted.description.clone(),
@@ -104,7 +90,6 @@ pub fn confirm_analysis(
             ocr_text: ocr_text.clone(),
             ai_confidence: Some(extracted.confidence),
         };
-
         match task_db::create_task(&conn, &input) {
             Ok(task) => {
                 created_tasks.push(task);
@@ -114,12 +99,9 @@ pub fn confirm_analysis(
             }
         }
     }
-
     info!("Created {} tasks from AI analysis", created_tasks.len());
-
     Ok(created_tasks)
 }
-
 /// 获取 AI 配置
 #[tauri::command]
 pub fn get_ai_config(state: State<DbState>) -> Result<AIModelConfig, String> {
@@ -135,7 +117,6 @@ pub fn get_ai_config(state: State<DbState>) -> Result<AIModelConfig, String> {
     }
     Ok(safe_config)
 }
-
 /// 更新 AI 配置
 #[tauri::command]
 pub fn update_ai_config(state: State<DbState>, config: AIModelConfig) -> Result<(), String> {

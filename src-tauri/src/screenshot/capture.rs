@@ -1,1 +1,92 @@
-dXNlIGFueWhvdzo6e0NvbnRleHQsIFJlc3VsdH07CnVzZSBpbWFnZTo6SW1hZ2VFbmNvZGVyOwp1c2Ugc3RkOjppbzo6Q3Vyc29yOwojW2NmZyhhbnkodGFyZ2V0X29zID0gIm1hY29zIiwgdGFyZ2V0X29zID0gIndpbmRvd3MiKSldCnVzZSBzdGQ6OnByb2Nlc3M6OkNvbW1hbmQ7Ci8vLyDlhajlsY/miKrlsY/vvIzov5Tlm54gUE5HIOe8lueggeeahCBWZWM8dTg+CnB1YiBmbiBjYXB0dXJlX3NjcmVlbigpIC0+IFJlc3VsdDxWZWM8dTg+PiB7CiAgICAjW2NmZyh0YXJnZXRfb3MgPSAibWFjb3MiKV0KICAgIHsKICAgICAgICBjYXB0dXJlX3NjcmVlbl9tYWNvcygpCiAgICB9CiAgICAjW2NmZyh0YXJnZXRfb3MgPSAid2luZG93cyIpXQogICAgewogICAgICAgIGNhcHR1cmVfc2NyZWVuX3dpbmRvd3MoKQogICAgfQogICAgI1tjZmcobm90KGFueSh0YXJnZXRfb3MgPSAibWFjb3MiLCB0YXJnZXRfb3MgPSAid2luZG93cyIpKSldCiAgICB7CiAgICAgICAgRXJyKGFueWhvdzo6YW55aG93ISgiU2NyZWVuc2hvdCBjYXB0dXJlIGlzIG5vdCBzdXBwb3J0ZWQgb24gdGhpcyBwbGF0Zm9ybSIpKQogICAgfQp9Ci8vLyDljLrln5/miKrlsY/vvIzov5Tlm54gUE5HIOe8lueggeeahCBWZWM8dTg+CnB1YiBmbiBjYXB0dXJlX2FyZWEoX3g6IGkzMiwgX3k6IGkzMiwgX3dpZHRoOiBpMzIsIF9oZWlnaHQ6IGkzMikgLT4gUmVzdWx0PFZlYzx1OD4+IHsKICAgICNbY2ZnKHRhcmdldF9vcyA9ICJtYWNvcyIpXQogICAgewogICAgICAgIGNhcHR1cmVfYXJlYV9tYWNvcyhfeCwgX3ksIF93aWR0aCwgX2hlaWdodCkKICAgIH0KICAgICNbY2ZnKHRhcmdldF9vcyA9ICJ3aW5kb3dzIildCiAgICB7CiAgICAgICAgY2FwdHVyZV9hcmVhX3dpbmRvd3MoX3gsIF95LCBfd2lkdGgsIF9oZWlnaHQpCiAgICB9CiAgICAjW2NmZyhub3QoYW55KHRhcmdldF9vcyA9ICJtYWNvcyIsIHRhcmdldF9vcyA9ICJ3aW5kb3dzIikpKV0KICAgIHsKICAgICAgICBFcnIoYW55aG93Ojphbnlob3chKCJBcmVhIHNjcmVlbnNob3QgaXMgbm90IHN1cHBvcnRlZCBvbiB0aGlzIHBsYXRmb3JtIikpCiAgICB9Cn0KLy8vIOW9k+WJjeeql+WPo+aIquWxj++8jOi/lOWbniBQTkcg57yW56CB55qEIFZlYzx1OD4KcHViIGZuIGNhcHR1cmVfd2luZG93KCkgLT4gUmVzdWx0PFZlYzx1OD4+IHsKICAgICNbY2ZnKHRhcmdldF9vcyA9ICJtYWNvcyIpXQogICAgewogICAgICAgIGNhcHR1cmVfd2luZG93X21hY29zKCkKICAgIH0KICAgICNbY2ZnKHRhcmdldF9vcyA9ICJ3aW5kb3dzIildCiAgICB7CiAgICAgICAgY2FwdHVyZV93aW5kb3dfd2luZG93cygpCiAgICB9CiAgICAjW2NmZyhub3QoYW55KHRhcmdldF9vcyA9ICJtYWNvcyIsIHRhcmdldF9vcyA9ICJ3aW5kb3dzIikpKV0KICAgIHsKICAgICAgICBFcnIoYW55aG93Ojphbnlob3chKCJXaW5kb3cgc2NyZWVuc2hvdCBjYXB0dXJlIGlzIG5vdCBzdXBwb3J0ZWQgb24gdGhpcyBwbGF0Zm9ybSIpKQogICAgfQp9Ci8vLyDpppbpobvkvp3lpLHotKXvvIzpppblm77niYfmnKrlop7liqjogIXvvIoxLTEwMApwdWIgZm4gY29tcHJlc3NfaW1hZ2UoZGF0YTogJlt1OF0sIHF1YWxpdHk6IHU4KSAtPiBSZXN1bHQ8VmVjPHU4Pj4gewogICAgbGV0IGltZyA9IGltYWdlOjpsb2FkX2Zyb21fbWVtb3J5KGRhdGEpCiAgICAgICAgLmNvbnRleHQoIkZhaWxlZCB0byBkZWNvZGUgaW1hZ2UgZm9yIGNvbXByZXNzaW9uIik/OwogICAgbGV0IHJnYl9pbWcgPSBpbWcudG9fcmdiOCgpOwogICAgbGV0IHNjYWxlID0gaWYgcXVhbGl0eSA8IDMwIHsKICAgICAgICAwLjUKICAgIH0gZWxzZSBpZiBxdWFsaXR5IDwgNjAgewogICAgICAgIDAuNwogICAgfSBlbHNlIGlmIHF1YWxpdHkgPCA4MCB7CiAgICAgICAgMC44NQogICAgfSBlbHNlIHsKICAgICAgICAxLjAKICAgIH07CiAgICBsZXQgKHcsIGgpID0gcmdiX2ltZy5kaW1lbnNpb25zKCk7CiAgICBsZXQgbmV3X3cgPSAodyBhcyBmNjQgKiBzY2FsZSkubWF4KDEuMCkgYXMgdTMyOwogICAgbGV0IG5ld19oID0gKGggYXMgZjY0ICogc2NhbGUpLm1heCgxLjApIGFzIHUzMjsKICAgIGxldCByZXNpemVkID0gaW1hZ2U6OmltYWdlb3BzOjpyZXNpemUoCiAgICAgICAgJnJnYl9pbWcsCiAgICAgICAgbmV3X3csCiAgICAgICAgbmV3X2gsCiAgICAgICAgaW1hZ2U6OmltYWdlb3BzOjpGaWx0ZXJUeXBlOjpMYW5jem9zMywKICAgICk7CiAgICBsZXQgbXV0IGJ1ZiA9IEN1cnNvcjo6bmV3KFZlYzo6bmV3KCkpOwogICAgbGV0IGVuY29kZXIgPSBpbWFnZTo6Y29kZWNzOjpwbmc6OlBuZ0VuY29kZXI6Om5ld193aXRoX3F1YWxpdHkoCiAgICAgICAgJm11dCBidWYsCiAgICAgICAgaW1hZ2U6OmNvZGVjczo6cG5nOjpDb21wcmVzc2lvblR5cGU6OkZhc3QsCiAgICAgICAgaW1hZ2U6OmNvZGVjczo6cG5nOjpGaWx0ZXJUeXBlOjpBZGFwdGl2ZSwKICAgICk7CiAgICBlbmNvZGVyLndyaXRlX2ltYWdlKAogICAgICAgIHJlc2l6ZWQuYXNfcmF3KCksCiAgICAgICAgbmV3X3csCiAgICAgICAgbmV3X2gsCiAgICAgICAgaW1hZ2U6OkV4dGVuZGVkQ29sb3JUeXBlOjpSZ2I4LAogICAgKS5jb250ZXh0KCJGYWlsZWQgdG8gZW5jb2RlIGNvbXByZXNzZWQgUE5HIik/OwogICAgT2soYnVmLmludG9faW5uZXIoKSkKfQo=
+use anyhow::{Context, Result};
+use image::ImageEncoder;
+use std::io::Cursor;
+
+#[cfg(any(target_os = "macos", target_os = "windows"))]
+use std::process::Command;
+
+/// 全屏截屏，返回 PNG 编码的 Vec<u8>
+pub fn capture_screen() -> Result<Vec<u8>> {
+    #[cfg(target_os = "macos")]
+    {
+        capture_screen_macos()
+    }
+    #[cfg(target_os = "windows")]
+    {
+        capture_screen_windows()
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    {
+        Err(anyhow::anyhow!("Screenshot capture is not supported on this platform"))
+    }
+}
+
+/// 区域截屏，返回 PNG 编码的 Vec<u8>
+pub fn capture_area(_x: i32, _y: i32, _width: i32, _height: i32) -> Result<Vec<u8>> {
+    #[cfg(target_os = "macos")]
+    {
+        capture_area_macos(_x, _y, _width, _height)
+    }
+    #[cfg(target_os = "windows")]
+    {
+        capture_area_windows(_x, _y, _width, _height)
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    {
+        Err(anyhow::anyhow!("Area screenshot is not supported on this platform"))
+    }
+}
+
+/// 当前窗口截屏，返回 PNG 编码的 Vec<u8>
+pub fn capture_window() -> Result<Vec<u8>> {
+    #[cfg(target_os = "macos")]
+    {
+        capture_window_macos()
+    }
+    #[cfg(target_os = "windows")]
+    {
+        capture_window_windows()
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    {
+        Err(anyhow::anyhow!("Window screenshot capture is not supported on this platform"))
+    }
+}
+
+/// 压缩图片，质量范围 1-100
+pub fn compress_image(data: &[u8], quality: u8) -> Result<Vec<u8>> {
+    let img = image::load_from_memory(data)
+        .context("Failed to decode image for compression")?;
+    let rgb_img = img.to_rgb8();
+    let scale = if quality < 30 {
+        0.5
+    } else if quality < 60 {
+        0.7
+    } else if quality < 80 {
+        0.85
+    } else {
+        1.0
+    };
+    let (w, h) = rgb_img.dimensions();
+    let new_w = (w as f64 * scale).max(1.0) as u32;
+    let new_h = (h as f64 * scale).max(1.0) as u32;
+    let resized = image::imageops::resize(
+        &rgb_img,
+        new_w,
+        new_h,
+        image::imageops::FilterType::Lanczos3,
+    );
+    let mut buf = Cursor::new(Vec::new());
+    let encoder = image::codecs::png::PngEncoder::new_with_quality(
+        &mut buf,
+        image::codecs::png::CompressionType::Fast,
+        image::codecs::png::FilterType::Adaptive,
+    );
+    encoder.write_image(
+        resized.as_raw(),
+        new_w,
+        new_h,
+        image::ExtendedColorType::Rgb8,
+    ).context("Failed to encode compressed PNG")?;
+    Ok(buf.into_inner())
+}

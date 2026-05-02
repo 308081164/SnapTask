@@ -1,1 +1,55 @@
-dXNlIHRhdXJpOnsKICAgIEFwcEhhbmRsZSwKICAgIEVtaXR0ZXIsCn07CnVzZSB0YXVyaV9wbHVnaW5fZ2xvYmFsX3Nob3J0Y3V0Ojp7Q29kZSwgR2xvYmFsU2hvcnRjdXRFeHQsIE1vZGlmaWVycywgU2hvcnRjdXQsIFNob3J0Y3V0U3RhdGV9Owp1c2UgbG9nOjp7aW5mbywgZXJyb3J9OwovLy8g5Yqg6L295bim5a625Lit5a+G56CB5pWw5o2uCnB1YiBmbiByZWdpc3Rlcl9ob3RrZXlzKGFwcDogJkFwcEhhbmRsZSkgLT4gUmVzdWx0PCgpLCBCb3g8ZHluIHN0ZDo6ZXJyb3I6OkVycm9yPj4gewogICAgLy8gQ3RybCtTaGlmdCtTOiDljLrln5/liqjogIXliqnmoLzlvI8KICAgIGxldCBhcmVhX3Nob3J0Y3V0ID0gU2hvcnRjdXQ6Om5ldyhTb21lKE1vZGlmaWVyczo6Q09OVFJPTCB8IE1vZGlmaWVyczo6U0hJRlQpLCBDb2RlOjpLZXlTKTsKICAgIGlmIGxldCBFcnIoZSkgPSBhcHAuZ2xvYmFsX3Nob3J0Y3V0KCkub25fc2hvcnRjdXQoYXJlYV9zaG9ydGN1dCwgfF9hcHA6ICZBcHBIYW5kbGUsIF9zaG9ydGN1dCwgX2V2ZW50OiBTaG9ydGN1dFN0YXRlfHwgewogICAgICAgIGluZm8hKCJIb3RrZXkgdHJpZ2dlcmVkOiBhcmVhIHNjcmVlbnNob3QgKEN0cmwrU2hpZnQrUykiKTsKICAgICAgICAvLyDlj5HnjrDliqnmoLzlvI/kuqTkvLDlgLzliIbmrrUKICAgICAgICBpZiBsZXQgRXJyKGUpID0gX2FwcC5lbWl0KCJzY3JlZW5zaG90OnRyaWdnZXIiLCBzZXJkZV9qc29uOjpqc29uISh7Im1vZGUiOiAiYXJlYSJ9KSkgewogICAgICAgICAgICBlcnJvciEoIkZhaWxlZCB0byBlbWl0IHNjcmVlbnNob3Q6dHJpZ2dlciBldmVudDoge30iLCBlKTsKICAgICAgICB9CiAgICB9KSB7CiAgICAgICAgZXJyb3IhKCJGYWlsZWQgdG8gcmVnaXN0ZXIgYXJlYSBzY3JlZW5zaG90IHNob3J0Y3V0OiB7fSIsIGUpOwogICAgfQogICAgLy8gQ3RybCtTaGlmdCtBOiDlhajlsY/liqnmoLzlvI8KICAgIGxldCBmdWxsX3Nob3J0Y3V0ID0gU2hvcnRjdXQ6Om5ldyhTb21lKE1vZGlmaWVyczo6Q09OVFJPTCB8IE1vZGlmaWVyczo6U0hJRlQpLCBDb2RlOjpLZXlBKTsKICAgIGlmIGxldCBFcnIoZSkgPSBhcHAuZ2xvYmFsX3Nob3J0Y3V0KCkub25fc2hvcnRjdXQoZnVsbF9zaG9ydGN1dCwgfF9hcHA6ICZBcHBIYW5kbGUsIF9zaG9ydGN1dCwgX2V2ZW50OiBTaG9ydGN1dFN0YXRlfHwgewogICAgICAgIGluZm8hKCJIb3RrZXkgdHJpZ2dlcmVkOiBmdWxsIHNjcmVlbnNob3QgKEN0cmwrU2hpZnQrQSkiKTsKICAgICAgICBpZiBsZXQgRXJyKGUpID0gX2FwcC5lbWl0KCJzY3JlZW5zaG90OnRyaWdnZXIiLCBzZXJkZV9qc29uOjpqc29uISh7Im1vZGUiOiAiZnVsbCJ9KSkgewogICAgICAgICAgICBlcnJvciEoIkZhaWxlZCB0byBlbWl0IHNjcmVlbnNob3Q6dHJpZ2dlciBldmVudDoge30iLCBlKTsKICAgICAgICB9CiAgICB9KSB7CiAgICAgICAgZXJyb3IhKCJGYWlsZWQgdG8gcmVnaXN0ZXIgZnVsbCBzY3JlZW5zaG90IHNob3J0Y3V0OiB7fSIsIGUpOwogICAgfQogICAgLy8gQ3RybCtTaGlmdCtXOiDlvZPliY3liqnmoLzlvI8KICAgIGxldCB3aW5kb3dfc2hvcnRjdXQgPSBTaG9ydGN1dDo6bmV3KFNvbWUoTW9kaWZpZXJzOjpDT05UUk9MIHwgTW9kaWZpZXJzOjpTSElGVCksIENvZGU6OktleVcpOwogICAgaWYgbGV0IEVycihlKSA9IGFwcC5nbG9iYWxfc2hvcnRjdXQoKS5vbl9zaG9ydGN1dCh3aW5kb3dfc2hvcnRjdXQsIHxfYXBwOiAmQXBwSGFuZGxlLCBfc2hvcnRjdXQsIF9ldmVudDogU2hvcnRjdXRTdGF0ZXx8IHsKICAgICAgICBpbmZvISgiSG90a2V5IHRyaWdnZXJlZDogd2luZG93IHNjcmVlbnNob3QgKEN0cmwrU2hpZnQrVykiKTsKICAgICAgICBpZiBsZXQgRXJyKGUpID0gX2FwcC5lbWl0KCJzY3JlZW5zaG90OnRyaWdnZXIiLCBzZXJkZV9qc29uOjpqc29uISh7Im1vZGUiOiAid2luZG93In0pKSB7CiAgICAgICAgICAgIGVycm9yISgiRmFpbGVkIHRvIGVtaXQgc2NyZWVuc2hvdDp0cmlnZ2VyIGV2ZW50OiB7fSIsIGUpOwogICAgICAgIH0KICAgIH0pIHsKICAgICAgICBlcnJvciEoIkZhaWxlZCB0byByZWdpc3RlciB3aW5kb3cgc2NyZWVuc2hvdCBzaG9ydGN1dDoge30iLCBlKTsKICAgIH0KICAgIGluZm8hKCJHbG9iYWwgaG90a2V5cyByZWdpc3RlcmVkIHN1Y2Nlc3NmdWxseSIpOwogICAgT2soKCkKfQovLy8g5o+Q5Yqg5bim5a625Lit5a+G56CB5pWw5o2uCnB1YiBmbiB1bnJlZ2lzdGVyX2hvdGtleXMoYXBwOiAmQXBwSGFuZGxlKSAtPiBSZXN1bHQ8KCksIEJveDxkeW4gc3RkOjplcnJvcjo6RXJyb3I+PiB7CiAgICBsZXQgYXJlYV9zaG9ydGN1dCA9IFNob3J0Y3V0OjpuZXcoU29tZShNb2RpZmllcnM6OkNPTlRST0wgfCBNb2RpZmllcnM6OlNISUZUKSwgQ29kZTo6S2V5Uyk7CiAgICBsZXQgZnVsbF9zaG9ydGN1dCA9IFNob3J0Y3V0OjpuZXcoU29tZShNb2RpZmllcnM6OkNPTlRST0wgfCBNb2RpZmllcnM6OlNISUZUKSwgQ29kZTo6S2V5QSk7CiAgICBsZXQgd2luZG93X3Nob3J0Y3V0ID0gU2hvcnRjdXQ6Om5ldyhTb21lKE1vZGlmaWVyczo6Q09OVFJPTCB8IE1vZGlmaWVyczo6U0hJRlQpLCBDb2RlOjpLZXlXKTsKICAgIGxldCBfID0gYXBwLmdsb2JhbF9zaG9ydGN1dCgpLnVucmVnaXN0ZXIoYXJlYV9zaG9ydGN1dCk7CiAgICBsZXQgXyA9IGFwcC5nbG9iYWxfc2hvcnRjdXQoKS51bnJlZ2lzdGVyKGZ1bGxfc2hvcnRjdXQpOwogICAgbGV0IF8gPSBhcHAuZ2xvYmFsX3Nob3J0Y3V0KCkudW5yZWdpc3Rlcih3aW5kb3dfc2hvcnRjdXQpOwogICAgaW5mbyEoIkdsb2JhbCBob3RrZXlzIHVucmVnaXN0ZXJlZCIpOwogICAgT2soKCkKfQo=
+use tauri::{
+    AppHandle,
+    Emitter,
+};
+use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
+use log::{info, error};
+
+/// 注册全局快捷键
+pub fn register_hotkeys(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+    // Ctrl+Shift+S: 区域截图快捷键
+    let area_shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyS);
+    if let Err(e) = app.global_shortcut().on_shortcut(area_shortcut, |_app: &AppHandle, _shortcut, _event: ShortcutState|| {
+        info!("Hotkey triggered: area screenshot (Ctrl+Shift+S)");
+        // 通知前端进行区域截图
+        if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({"mode": "area"})) {
+            error!("Failed to emit screenshot:trigger event: {}", e);
+        }
+    }) {
+        error!("Failed to register area screenshot shortcut: {}", e);
+    }
+    // Ctrl+Shift+A: 全屏截图快捷键
+    let full_shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyA);
+    if let Err(e) = app.global_shortcut().on_shortcut(full_shortcut, |_app: &AppHandle, _shortcut, _event: ShortcutState|| {
+        info!("Hotkey triggered: full screenshot (Ctrl+Shift+A)");
+        if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({"mode": "full"})) {
+            error!("Failed to emit screenshot:trigger event: {}", e);
+        }
+    }) {
+        error!("Failed to register full screenshot shortcut: {}", e);
+    }
+    // Ctrl+Shift+W: 当前窗口截图快捷键
+    let window_shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyW);
+    if let Err(e) = app.global_shortcut().on_shortcut(window_shortcut, |_app: &AppHandle, _shortcut, _event: ShortcutState|| {
+        info!("Hotkey triggered: window screenshot (Ctrl+Shift+W)");
+        if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({"mode": "window"})) {
+            error!("Failed to emit screenshot:trigger event: {}", e);
+        }
+    }) {
+        error!("Failed to register window screenshot shortcut: {}", e);
+    }
+    info!("Global hotkeys registered successfully");
+    Ok(())
+}
+
+/// 注销全局快捷键
+pub fn unregister_hotkeys(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+    let area_shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyS);
+    let full_shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyA);
+    let window_shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyW);
+    let _ = app.global_shortcut().unregister(area_shortcut);
+    let _ = app.global_shortcut().unregister(full_shortcut);
+    let _ = app.global_shortcut().unregister(window_shortcut);
+    info!("Global hotkeys unregistered");
+    Ok(())
+}

@@ -1,1 +1,144 @@
-dXNlIHN0ZDo6c3luYzo6QXJjOwp1c2Ugc3RkOjpzeW5jOjpNdXRleDsKdXNlIHJ1c3FsaXRlOjpDb25uZWN0aW9uOwp1c2UgdGF1cmk6e0FwcEhhbmRsZSwgRW1pdHRlcn07CnVzZSB0YXVyaV9wbHVnaW5fbm90aWZpY2F0aW9uOjpOb3RpZmljYXRpb25FeHQ7CnVzZSBsb2c6e2luZm8sIGVycm9yfTsKdXNlIGNyYXRlOjpkYjo6cmVtaW5kZXIgYXMgcmVtaW5kZXJfZGI7CnVzZSBjcmF0ZTo6ZGI6OnRhc2sgYXMgdGFza19kYjsKLy8vIOa4uOaJuemHj+W3ruW8j+WboOatpQpwdWIgc3RydWN0IFJlbWluZGVyU2NoZWR1bGVyIHsKICAgIGFwcF9oYW5kbGU6IEFyYzxNdXRleDxPcHRpb248QXBwSGFuZGxlPj4+LAogICAgcnVubmluZzogQXJjPE11dGV4PGJvb2w+PiwKfQppbXBsIFJlbWluZGVyU2NoZWR1bGVyIHsKICAgIHB1YiBmbiBuZXcoKSAtPiBTZWxmIHsKICAgICAgICBSZW1pbmRlclNjaGVkdWxlciB7CiAgICAgICAgICAgIGFwcF9oYW5kbGU6IEFyYzo6bmV3KE11dGV4OjpuZXcoTm9uZSkpLAogICAgICAgICAgICBydW5uaW5nOiBBcmM6Om5ldyhNdXRleDo6bmV3KGZhbHNlKSksCiAgICAgICAgfQogICAgfQogICAgLy8vIOi/lOWbnuW4ruWKqeWQjQogICAgcHViIGZuIHNldF9hcHBfaGFuZGxlKCZzZWxmLCBoYW5kbGU6IEFwcEhhbmRsZSkgewogICAgICAgIGxldCBtdXQgYXBwID0gc2VsZi5hcHBfaGFuZGxlLmxvY2soKS51bndyYXAoKTsKICAgICAgICAqYXBwID0gU29tZShoYW5kbGUpOwogICAgfQogICAgLy8vIOWbtuaJuemHj+W3ruW8j+WboOatpQogICAgcHViIGZuIHN0YXJ0KCZzZWxmKSB7CiAgICAgICAgbGV0IHJ1bm5pbmcgPSBzZWxmLnJ1bm5pbmcuY2xvbmUoKTsKICAgICAgICBsZXQgYXBwX2hhbmRsZSA9IHNlbGYuYXBwX2hhbmRsZS5jbG9uZSgpOwogICAgICAgIHsKICAgICAgICAgICAgbGV0IG11dCByID0gcnVubmluZy5sb2NrKCkudW53cmFwKCk7CiAgICAgICAgICAgIGlmICpyIHsKICAgICAgICAgICAgICAgIGluZm8hKCJSZW1pbmRlciBzY2hlZHVsZXIgaXMgYWxyZWFkeSBydW5uaW5nIik7CiAgICAgICAgICAgICAgICByZXR1cm47CiAgICAgICAgICAgIH0KICAgICAgICAgICAgKnIgPSB0cnVlOwogICAgICAgIH0KICAgICAgICBsZXQgZGJfcGF0aCA9IGNyYXRlOjpkYjo6aW5pdDo6Z2V0X2RhdGFiYXNlX3BhdGgoKTsKICAgICAgICBzZWxmLmNoZWNrX3JlbWluZGVycygmZGJfcGF0aCk7CiAgICAgICAgdG9raW86OnNwYXduKGFzeW5jIG1vdmUgewogICAgICAgICAgICBpbmZvISgiUmVtaW5kZXIgc2NoZWR1bGVyIHN0YXJ0ZWQsIGNoZWNraW5nIGV2ZXJ5IDYwIHNlY29uZHMiKTsKICAgICAgICAgICAgbG9vcCB7CiAgICAgICAgICAgICAgICB0b2tpbzo6dGltZTo6c2xlZXAoc3RkOjp0aW1lOjpEdXJhdGlvbjo6ZnJvbV9zZWNzKDYwKSkuYXdhaXQ7CiAgICAgICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAgICAgbGV0IHIgPSBydW5uaW5nLmxvY2soKS51bndyYXAoKTsKICAgICAgICAgICAgICAgICAgICBpZiAhKnIgewogICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBsZXQgYXBwID0gYXBwX2hhbmRsZS5sb2NrKCkudW53cmFwKCk7CiAgICAgICAgICAgICAgICBpZiBsZXQgU29tZShyZWYgaGFuZGxlKSA9ICphcHAgewogICAgICAgICAgICAgICAgICAgIGxldCBjb25uID0gbWF0Y2ggQ29ubmVjdGlvbjo6b3BlbigmZGJfcGF0aCkgewogICAgICAgICAgICAgICAgICAgICAgICBPayhjKSA9PiBjLAogICAgICAgICAgICAgICAgICAgICAgICBFcnIoZSkgPT4gewogICAgICAgICAgICAgICAgICAgICAgICAgICAgZXJyb3IhKCJGYWlsZWQgdG8gb3BlbiBkYXRhYmFzZSBmb3IgcmVtaW5kZXIgY2hlY2s6IHt9IiwgZSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIH07CiAgICAgICAgICAgICAgICAgICAgbGV0IGNvbm4gPSBtYXRjaCBDb25uZWN0aW9uOjpvcGVuKCZkYl9wYXRoKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIE9rKGMpID0+IGMsCiAgICAgICAgICAgICAgICAgICAgICAgIEVycihlKSA9PiB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBlcnJvciEoIkZhaWxlZCB0byBvcGVuIGRhdGFiYXNlIGZvciByZW1pbmRlciBjaGVjazoge30iLCBlKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOwogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfTsKICAgICAgICAgICAgICAgICAgICAgaWYgbGV0IEVycihlKSA9IGNyYXRlOjpkYjo6aW5pdDo6aW5pdF9kYXRhYmFzZSgmY29ubikgewogICAgICAgICAgICAgICAgICAgICAgICBlcnJvciEoIkZhaWxlZCB0byBpbml0aWFsaXplIGRhdGFiYXNlIGZvciByZW1pbmRlciBjaGVjazoge30iLCBlKTsKICAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIG1hdGNoIHJlbWluZGVyX2RiOjpnZXRfcGVuZGluZ19yZW1pbmRlcnMoJmNvbm4pIHsKICAgICAgICAgICAgICAgICAgICAgICAgT2socmVtaW5kZXJzKSA9PiB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBmb3IgcmVtaW5kZXIgaW4gcmVtaW5kZXJzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXQgdGFza190aXRsZSA9IHRhc2tfZGI6OmdldF90YXNrKCZjb25uLCAmcmVtaW5kZXIudGFza19pZCkKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC5tYXAofHR8IHQudGl0bGUpCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAudW53cmFwX29yX2Vsc2UofF8pICLkuKTmrKHlj7ciLnRvX3N0cmluZygpOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxldCBtZXNzYWdlID0gcmVtaW5kZXIubWVzc2FnZQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAudW53cmFwX29yX2Vsc2UofHwgZm9ybWF0ISgi5LqL5oyB5rWL6K+V6L+H56iLOiB7fSIsIHRhc2tfdGl0bGUpKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXQgbm90aWZpY2F0aW9uX2lkOiBpMzIgPSByZW1pbmRlci5pZC5hc19ieXRlcygpLml0ZXIoKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuZm9sZCgwaTMyLCB8YWNjLCAmYnwgYWNjLndyYXBwaW5nX211bCgzMSkud3JhcHBpbmdfYWRkKGIgYXMgaTMyKSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgbGV0IEVycihlKSA9IGhhbmRsZS5ub3RpZmljYXRpb24oKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuYnVpbGRlcigpCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC50aXRsZSgiU25hcFRhc2sg5LqL5oyB5rWL6K+VIikKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC5ib2R5KCZtZXNzYWdlKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLmlkKG5vdGlmaWNhdGlvbl9pZCkKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC5zaG93KCkKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlcnJvciEoIkZhaWxlZCB0byBzaG93IG5vdGlmaWNhdGlvbjoge30iLCBlKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgbGV0IEVycihlKSA9IGhhbmRsZS5lbWl0KCJyZW1pbmRlcjpmaXJlIiwgc2VyZGVfanNvbjo6anNvbiEoewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiaWQiOiByZW1pbmRlci5pZCwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInRhc2tfaWQiOiByZW1pbmRlci50YXNrX2lkLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAidGFza190aXRsZSI6IHRhc2tfdGl0bGUsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJtZXNzYWdlIjogbWVzc2FnZSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInJlbWluZGVyX3RpbWUiOiByZW1pbmRlci5yZW1pbmRlcl90aW1lLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB9KSkgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlcnJvciEoIkZhaWxlZCB0byBlbWl0IHJlbWluZGVyOmZpcmUgZXZlbnQ6IHt9IiwgZSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIGxldCBFcnIoZSkgPSByZW1pbmRlcl9kYjo6dXBkYXRlX3JlbWluZGVyX3N0YXR1cygmY29ubiwgJnJlbWluZGVyLmlkLCAiZmlyZWQiKSB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlcnJvciEoIkZhaWxlZCB0byB1cGRhdGUgcmVtaW5kZXIgc3RhdHVzOiB7fSIsIGUpOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbmZvISgiUmVtaW5kZXIgZmlyZWQgZm9yIHRhc2s6IHt9IiwgdGFza190aXRsZSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgRXJyKGUpID0+IHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVycm9yISgiRmFpbGVkIHRvIGdldCBwZW5kaW5nIHJlbWluZGVyczoge30iLCBlKTsKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KICAgICAgICAgICAgaW5mbyEoIlJlbWluZGVyIHNjaGVkdWxlciBzdG9wcGVkIik7CiAgICAgICAgfSk7CiAgICB9CiAgICBwdWIgZm4gc3RvcCgmc2VsZikgewogICAgICAgIGxldCBtdXQgciA9IHJ1bm5pbmcubG9jaygpLnVud3JhcCgpOwogICAgICAgICpyID0gZmFsc2U7CiAgICAgICAgaW5mbyEoIlJlbWluZGVyIHNjaGVkdWxlciBzdG9wIHJlcXVlc3RlZCIpOwogICAgfQogICAgZm4gY2hlY2tfcmVtaW5kZXJzKCZzZWxmLCBkYl9wYXRoOiAmc3RyKSB7CiAgICAgICAgbGV0IGNvbm4gPSBtYXRjaCBDb25uZWN0aW9uOjpvcGVuKGRiX3BhdGgpIHsKICAgICAgICAgICAgT2soYykgPT4gYywKICAgICAgICAgICAgRXJyKGUpID0+IHsKICAgICAgICAgICAgICAgIGVycm9yISgiRmFpbGVkIHRvIG9wZW4gZGF0YWJhc2UgZm9yIGluaXRpYWwgcmVtaW5kZXIgY2hlY2s6IHt9IiwgZSk7CiAgICAgICAgICAgICAgICByZXR1cm47CiAgICAgICAgICAgIH07CiAgICAgICAgfTsKICAgICAgICBpZiBsZXQgRXJyKGUpID0gY3JhdGU6OmRiOjppbml0Ojppbml0X2RhdGFiYXNlKCZjb25uKSB7CiAgICAgICAgICAgIGVycm9yISgiRmFpbGVkIHRvIGluaXRpYWxpemUgZGF0YWJhc2UgZm9yIGluaXRpYWwgcmVtaW5kZXIgY2hlY2s6IHt9IiwgZSk7CiAgICAgICAgICAgIHJldHVybjsKICAgICAgICB9OwogICAgICAgIG1hdGNoIHJlbWluZGVyX2RiOjpnZXRfcGVuZGluZ19yZW1pbmRlcnMoJmNvbm4pIHsKICAgICAgICAgICAgT2socmVtaW5kZXJzKSA9PiB7CiAgICAgICAgICAgICAgICBpbmZvISgiRm91bmQge30gcGVuZGluZyByZW1pbmRlcnMgb24gc3RhcnR1cCIsIHJlbWluZGVycy5sZW4oKSk7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgRXJyKGUpID0+IHsKICAgICAgICAgICAgICAgIGVycm9yISgiRmFpbGVkIHRvIGNoZWNrIHBlbmRpbmcgcmVtaW5kZXJzIG9uIHN0YXJ0dXA6IHt9IiwgZSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0KaW1wbCBEZWZhdWx0IGZvciBSZW1pbmRlclNjaGVkdWxlciB7CiAgICBmbiBkZWZhdWx0KCkgLT4gU2VsZiB7CiAgICAgICAgU2VsZjo6bmV3KCkKICAgIH0KfQo=
+use std::sync::Arc;
+use std::sync::Mutex;
+use rusqlite::Connection;
+use tauri::{AppHandle, Emitter};
+use tauri_plugin_notification::NotificationExt;
+use log::{info, error};
+use crate::db::reminder as reminder_db;
+use crate::db::task as task_db;
+
+/// 提醒调度器
+pub struct ReminderScheduler {
+    app_handle: Arc<Mutex<Option<AppHandle>>>,
+    running: Arc<Mutex<bool>>,
+}
+
+impl ReminderScheduler {
+    pub fn new() -> Self {
+        ReminderScheduler {
+            app_handle: Arc::new(Mutex::new(None)),
+            running: Arc::new(Mutex::new(false)),
+        }
+    }
+
+    /// 设置 AppHandle
+    pub fn set_app_handle(&self, handle: AppHandle) {
+        let mut app = self.app_handle.lock().unwrap();
+        *app = Some(handle);
+    }
+
+    /// 启动定期检查
+    pub fn start(&self) {
+        let running = self.running.clone();
+        let app_handle = self.app_handle.clone();
+        {
+            let mut r = running.lock().unwrap();
+            if *r {
+                info!("Reminder scheduler is already running");
+                return;
+            }
+            *r = true;
+        }
+        let db_path = crate::db::init::get_database_path();
+        self.check_reminders(&db_path);
+        tokio::spawn(async move {
+            info!("Reminder scheduler started, checking every 60 seconds");
+            loop {
+                tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+                {
+                    let r = running.lock().unwrap();
+                    if !*r {
+                        break;
+                    }
+                }
+                let app = app_handle.lock().unwrap();
+                if let Some(ref handle) = *app {
+                    let conn = match Connection::open(&db_path) {
+                        Ok(c) => c,
+                        Err(e) => {
+                            error!("Failed to open database for reminder check: {}", e);
+                            continue;
+                        }
+                    };
+                    if let Err(e) = crate::db::init::init_database(&conn) {
+                        error!("Failed to initialize database for reminder check: {}", e);
+                        continue;
+                    }
+                    match reminder_db::get_pending_reminders(&conn) {
+                        Ok(reminders) => {
+                            for reminder in reminders {
+                                let task_title = task_db::get_task(&conn, &reminder.task_id)
+                                    .map(|t| t.title)
+                                    .unwrap_or_else(|_| "\u{672a}\u{77e5}\u{4efb}\u{52a1}".to_string());
+                                let message = reminder.message
+                                    .unwrap_or_else(|| format!("\u{4efb}\u{52a1}\u{63d0}\u{9192}: {}", task_title));
+                                let notification_id: i32 = reminder.id.as_bytes().iter()
+                                    .fold(0i32, |acc, &b| acc.wrapping_mul(31).wrapping_add(b as i32));
+                                if let Err(e) = handle.notification()
+                                    .builder()
+                                    .title("SnapTask \u{4efb}\u{52a1}\u{63d0}\u{9192}")
+                                    .body(&message)
+                                    .id(notification_id)
+                                    .show()
+                                {
+                                    error!("Failed to show notification: {}", e);
+                                }
+                                if let Err(e) = handle.emit("reminder:fire", serde_json::json!({
+                                    "id": reminder.id,
+                                    "task_id": reminder.task_id,
+                                    "task_title": task_title,
+                                    "message": message,
+                                    "reminder_time": reminder.reminder_time,
+                                })) {
+                                    error!("Failed to emit reminder:fire event: {}", e);
+                                }
+                                if let Err(e) = reminder_db::update_reminder_status(&conn, &reminder.id, "fired") {
+                                    error!("Failed to update reminder status: {}", e);
+                                }
+                                info!("Reminder fired for task: {}", task_title);
+                            }
+                        }
+                        Err(e) => {
+                            error!("Failed to get pending reminders: {}", e);
+                        }
+                    }
+                }
+            }
+            info!("Reminder scheduler stopped");
+        });
+    }
+
+    pub fn stop(&self) {
+        let mut r = self.running.lock().unwrap();
+        *r = false;
+        info!("Reminder scheduler stop requested");
+    }
+
+    fn check_reminders(&self, db_path: &str) {
+        let conn = match Connection::open(db_path) {
+            Ok(c) => c,
+            Err(e) => {
+                error!("Failed to open database for initial reminder check: {}", e);
+                return;
+            }
+        };
+        if let Err(e) = crate::db::init::init_database(&conn) {
+            error!("Failed to initialize database for initial reminder check: {}", e);
+            return;
+        };
+        match reminder_db::get_pending_reminders(&conn) {
+            Ok(reminders) => {
+                info!("Found {} pending reminders on startup", reminders.len());
+            }
+            Err(e) => {
+                error!("Failed to check pending reminders on startup: {}", e);
+            }
+        }
+    }
+}
+
+impl Default for ReminderScheduler {
+    fn default() -> Self {
+        Self::new()
+    }
+}

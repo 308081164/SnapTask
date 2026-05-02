@@ -53,6 +53,156 @@ pub fn capture_window() -> Result<Vec<u8>> {
     }
 }
 
+// ==================== macOS 实现 ====================
+
+#[cfg(target_os = "macos")]
+fn capture_screen_macos() -> Result<Vec<u8>> {
+    let output = Command::new("screencapture")
+        .arg("-x")
+        .arg("-C")  // 不播放声音
+        .output()
+        .context("Failed to execute screencapture")?;
+    if !output.status.success() {
+        anyhow::bail!("screencapture failed: {}", String::from_utf8_lossy(&output.stderr));
+    }
+    Ok(output.stdout)
+}
+
+#[cfg(target_os = "macos")]
+fn capture_area_macos(x: i32, y: i32, width: i32, height: i32) -> Result<Vec<u8>> {
+    let rect = format!("{},{},{},{}", x, y, width, height);
+    let output = Command::new("screencapture")
+        .arg("-R")
+        .arg(&rect)
+        .arg("-x")
+        .output()
+        .context("Failed to execute screencapture for area")?;
+    if !output.status.success() {
+        anyhow::bail!("screencapture area failed: {}", String::from_utf8_lossy(&output.stderr));
+    }
+    Ok(output.stdout)
+}
+
+#[cfg(target_os = "macos")]
+fn capture_window_macos() -> Result<Vec<u8>> {
+    let output = Command::new("screencapture")
+        .arg("-l")
+        .arg("$(osascript -e 'tell app \"System Events\" to get id of window 1 of (first process whose frontmost is true)')")
+        .arg("-x")
+        .output()
+        .context("Failed to execute screencapture for window")?;
+    if !output.status.success() {
+        anyhow::bail!("screencapture window failed: {}", String::from_utf8_lossy(&output.stderr));
+    }
+    Ok(output.stdout)
+}
+
+// ==================== Windows 实现 ====================
+
+#[cfg(target_os = "windows")]
+fn capture_screen_windows() -> Result<Vec<u8>> {
+    // 使用 PowerShell 截屏
+    let ps_script = r#"
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+$bitmap = New-Object System.Drawing.Bitmap($screen.Width, $screen.Height)
+$graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+$graphics.CopyFromScreen($screen.Location, [System.Drawing.Point]::Empty, $screen.Size)
+$ms = New-Object System.IO.MemoryStream
+$bitmap.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+$ms.Close()
+[Convert]::ToBase64String($ms.ToArray())
+"#;
+    let output = Command::new("powershell")
+        .args(["-NoProfile", "-Command", ps_script])
+        .output()
+        .context("Failed to execute PowerShell for screenshot")?;
+    if !output.status.success() {
+        anyhow::bail!("PowerShell screenshot failed: {}", String::from_utf8_lossy(&output.stderr));
+    }
+    let b64_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let png_bytes = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &b64_str)
+        .map_err(|e| anyhow::anyhow!("Failed to decode screenshot base64: {}", e))?;
+    Ok(png_bytes)
+}
+
+#[cfg(target_os = "windows")]
+fn capture_area_windows(x: i32, y: i32, width: i32, height: i32) -> Result<Vec<u8>> {
+    let ps_script = format!(
+        r#"
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$bitmap = New-Object System.Drawing.Bitmap({}, {})
+$graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+$graphics.CopyFromScreen({}, {}, 0, 0, (New-Object System.Drawing.Size({}, {})))
+$ms = New-Object System.IO.MemoryStream
+$bitmap.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+$ms.Close()
+[Convert]::ToBase64String($ms.ToArray())
+"#,
+        width, height, x, y, width, height
+    );
+    let output = Command::new("powershell")
+        .args(["-NoProfile", "-Command", &ps_script])
+        .output()
+        .context("Failed to execute PowerShell for area screenshot")?;
+    if !output.status.success() {
+        anyhow::bail!("PowerShell area screenshot failed: {}", String::from_utf8_lossy(&output.stderr));
+    }
+    let b64_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let png_bytes = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &b64_str)
+        .map_err(|e| anyhow::anyhow!("Failed to decode area screenshot base64: {}", e))?;
+    Ok(png_bytes)
+}
+
+#[cfg(target_os = "windows")]
+fn capture_window_windows() -> Result<Vec<u8>> {
+    // Windows 窗口截图使用 PowerShell 获取前台窗口
+    let ps_script = r#"
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$handle = [System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle
+$rect = New-Object System.Drawing.Rectangle(0, 0, 0, 0)
+[System.Drawing.Graphics]::CopyFromScreen([System.Drawing.Point]::Empty, [System.Drawing.Point]::Empty, [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Size)
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class WinAPI {
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")]
+    public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT { public int Left, Top, Right, Bottom; }
+}
+"@
+$hwnd = [WinAPI]::GetForegroundWindow()
+$rect = New-Object WinAPI+RECT
+[WinAPI]::GetWindowRect($hwnd, [ref]$rect)
+$w = $rect.Right - $rect.Left
+$h = $rect.Bottom - $rect.Top
+$bitmap = New-Object System.Drawing.Bitmap($w, $h)
+$graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+$graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, (New-Object System.Drawing.Size($w, $h)))
+$ms = New-Object System.IO.MemoryStream
+$bitmap.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+$ms.Close()
+[Convert]::ToBase64String($ms.ToArray())
+"#;
+    let output = Command::new("powershell")
+        .args(["-NoProfile", "-Command", ps_script])
+        .output()
+        .context("Failed to execute PowerShell for window screenshot")?;
+    if !output.status.success() {
+        anyhow::bail!("PowerShell window screenshot failed: {}", String::from_utf8_lossy(&output.stderr));
+    }
+    let b64_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let png_bytes = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &b64_str)
+        .map_err(|e| anyhow::anyhow!("Failed to decode window screenshot base64: {}", e))?;
+    Ok(png_bytes)
+}
+
 /// 压缩图片，质量范围 1-100
 pub fn compress_image(data: &[u8], quality: u8) -> Result<Vec<u8>> {
     let img = image::load_from_memory(data)

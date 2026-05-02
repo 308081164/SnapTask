@@ -1,83 +1,295 @@
 use serde::{Deserialize, Serialize};
-/// AI 分析上下文
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AnalysisContext {
-    pub current_date: String,
-    pub current_time: String,
-    pub active_clients: Vec<String>,
-    pub active_projects: Vec<String>,
+use chrono::NaiveDateTime;
+
+/// 任务优先级
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskPriority {
+    None,
+    Low,
+    Medium,
+    High,
+    Urgent,
 }
-/// AI 分析结果
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AnalysisResult {
-    pub tasks: Vec<ExtractedTask>,
-    pub ocr_text: Option<String>,
-    pub scene_type: String,
-    pub model_used: String,
-    pub latency_ms: u64,
-}
-/// AI 提取的任务
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ExtractedTask {
-    pub title: String,
-    pub description: Option<String>,
-    pub client_name: Option<String>,
-    pub deadline: Option<String>,
-    pub priority: Option<String>,
-    pub tags: Option<Vec<String>>,
-    pub confidence: f64,
-    pub reasoning: Option<String>,
-}
-/// AI 模型配置
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AIModelConfig {
-    pub api_key: String,
-    pub model_name: String,
-    pub api_endpoint: String,
-    pub max_tokens: u32,
-    pub timeout_secs: u64,
-}
-impl Default for AIModelConfig {
+
+impl Default for TaskPriority {
     fn default() -> Self {
-        AIModelConfig {
-            api_key: String::new(),
-            model_name: "qwen2.5-vl-plus".to_string(),
-            api_endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions".to_string(),
-            max_tokens: 4096,
-            timeout_secs: 15,
+        TaskPriority::None
+    }
+}
+
+impl TaskPriority {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            TaskPriority::None => "none",
+            TaskPriority::Low => "low",
+            TaskPriority::Medium => "medium",
+            TaskPriority::High => "high",
+            TaskPriority::Urgent => "urgent",
+        }
+    }
+
+    pub fn from_str_value(s: &str) -> Self {
+        match s {
+            "low" => TaskPriority::Low,
+            "medium" => TaskPriority::Medium,
+            "high" => TaskPriority::High,
+            "urgent" => TaskPriority::Urgent,
+            _ => TaskPriority::None,
         }
     }
 }
-/// 聊天消息
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ChatMessage {
-    pub role: String,
-    pub content: serde_json::Value,
+
+/// 任务状态
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskStatus {
+    Pending,
+    InProgress,
+    Completed,
+    Archived,
 }
-/// DashScope API 请求体
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ChatCompletionRequest {
-    pub model: String,
-    pub messages: Vec<ChatMessage>,
-    pub max_tokens: u32,
-    pub temperature: f64,
+
+impl Default for TaskStatus {
+    fn default() -> Self {
+        TaskStatus::Pending
+    }
 }
-/// DashScope API 响应体
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ChatCompletionResponse {
-    pub choices: Vec<ChatChoice>,
-    pub usage: Option<Usage>,
-    pub model: String,
+
+impl TaskStatus {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            TaskStatus::Pending => "pending",
+            TaskStatus::InProgress => "in_progress",
+            TaskStatus::Completed => "completed",
+            TaskStatus::Archived => "archived",
+        }
+    }
+
+    pub fn from_str_value(s: &str) -> Self {
+        match s {
+            "in_progress" => TaskStatus::InProgress,
+            "completed" => TaskStatus::Completed,
+            "archived" => TaskStatus::Archived,
+            _ => TaskStatus::Pending,
+        }
+    }
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ChatChoice {
-    pub message: ChatMessage,
-    pub finish_reason: Option<String>,
-    pub index: Option<i32>,
+
+/// 来源类型
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceType {
+    Screenshot,
+    Manual,
+    Import,
 }
+
+impl Default for SourceType {
+    fn default() -> Self {
+        SourceType::Manual
+    }
+}
+
+impl SourceType {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            SourceType::Screenshot => "screenshot",
+            SourceType::Manual => "manual",
+            SourceType::Import => "import",
+        }
+    }
+
+    pub fn from_str_value(s: &str) -> Self {
+        match s {
+            "screenshot" => SourceType::Screenshot,
+            "import" => SourceType::Import,
+            _ => SourceType::Manual,
+        }
+    }
+}
+
+/// 任务
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Usage {
-    pub prompt_tokens: u32,
-    pub completion_tokens: u32,
-    pub total_tokens: u32,
+pub struct Task {
+    pub id: String,
+    pub title: String,
+    pub description: Option<String>,
+    pub status: String,
+    pub priority: String,
+    pub client_id: Option<String>,
+    pub project_id: Option<String>,
+    pub deadline: Option<String>,
+    pub tags: Option<String>,
+    pub source_type: String,
+    pub source_image: Option<String>,
+    pub ocr_text: Option<String>,
+    pub ai_confidence: Option<f64>,
+    pub created_at: String,
+    pub updated_at: String,
+    pub completed_at: Option<String>,
+    pub archived_at: Option<String>,
+}
+
+/// 客户
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Client {
+    pub id: String,
+    pub name: String,
+    pub company: Option<String>,
+    pub email: Option<String>,
+    pub phone: Option<String>,
+    pub notes: Option<String>,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+/// 项目
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Project {
+    pub id: String,
+    pub name: String,
+    pub description: Option<String>,
+    pub client_id: Option<String>,
+    pub color: Option<String>,
+    pub status: String,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+/// 提醒
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Reminder {
+    pub id: String,
+    pub task_id: String,
+    pub reminder_time: String,
+    pub message: Option<String>,
+    pub status: String,
+    pub created_at: String,
+    pub fired_at: Option<String>,
+}
+
+/// 变更记录
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChangeRecord {
+    pub id: String,
+    pub entity_type: String,
+    pub entity_id: String,
+    pub field_name: String,
+    pub old_value: Option<String>,
+    pub new_value: Option<String>,
+    pub changed_at: String,
+}
+
+/// 同步日志条目
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SyncLogEntry {
+    pub id: String,
+    pub entity_type: String,
+    pub entity_id: String,
+    pub operation: String,
+    pub data: Option<String>,
+    pub timestamp: String,
+    pub synced: bool,
+    pub device_id: String,
+}
+
+/// 应用设置
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Settings {
+    pub key: String,
+    pub value: String,
+    pub updated_at: String,
+}
+
+/// 创建任务的输入参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateTaskInput {
+    pub title: String,
+    pub description: Option<String>,
+    pub priority: Option<String>,
+    pub client_id: Option<String>,
+    pub project_id: Option<String>,
+    pub deadline: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub source_type: Option<String>,
+    pub source_image: Option<String>,
+    pub ocr_text: Option<String>,
+    pub ai_confidence: Option<f64>,
+}
+
+/// 更新任务的输入参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateTaskInput {
+    pub id: String,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub priority: Option<String>,
+    pub client_id: Option<String>,
+    pub project_id: Option<String>,
+    pub deadline: Option<String>,
+    pub tags: Option<Vec<String>>,
+}
+
+/// 创建客户的输入参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateClientInput {
+    pub name: String,
+    pub company: Option<String>,
+    pub email: Option<String>,
+    pub phone: Option<String>,
+    pub notes: Option<String>,
+}
+
+/// 更新客户的输入参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateClientInput {
+    pub id: String,
+    pub name: Option<String>,
+    pub company: Option<String>,
+    pub email: Option<String>,
+    pub phone: Option<String>,
+    pub notes: Option<String>,
+}
+
+/// 创建项目的输入参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateProjectInput {
+    pub name: String,
+    pub description: Option<String>,
+    pub client_id: Option<String>,
+    pub color: Option<String>,
+}
+
+/// 更新项目的输入参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateProjectInput {
+    pub id: String,
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub client_id: Option<String>,
+    pub color: Option<String>,
+    pub status: Option<String>,
+}
+
+/// 创建提醒的输入参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateReminderInput {
+    pub task_id: String,
+    pub reminder_time: String,
+    pub message: Option<String>,
+}
+
+/// 任务列表筛选参数
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TaskFilter {
+    pub status: Option<String>,
+    pub priority: Option<String>,
+    pub client_id: Option<String>,
+    pub project_id: Option<String>,
+    pub deadline_start: Option<String>,
+    pub deadline_end: Option<String>,
+    pub search: Option<String>,
+    pub limit: Option<i64>,
+    pub offset: Option<i64>,
 }

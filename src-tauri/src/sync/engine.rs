@@ -227,7 +227,7 @@ impl SyncEngine {
         let status = self.status.clone();
         let app_handle = self.app_handle.clone();
 
-        let result = tokio::task::spawn_blocking(move || {
+        tokio::task::spawn_blocking(move || {
             let conn = Connection::open(&db_path)
                 .map_err(|e| format!("数据库连接失败: {}", e))?;
             crate::db::init::init_database(&conn)
@@ -264,10 +264,10 @@ impl SyncEngine {
                     }));
                 }
             }
-            Ok(())
+            Ok::<(), String>(())
         }).await.map_err(|e| format!("同步任务执行失败: {}", e))??;
 
-        Ok(result)
+        Ok(())
     }
 }
 

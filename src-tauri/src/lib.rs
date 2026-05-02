@@ -71,7 +71,6 @@ pub fn run() {
                 }
             }
             // 监听截屏触发事件
-            let handle_for_screenshot = handle.clone();
             app.listen("screenshot:trigger", move |_event| {
                 info!("Received screenshot:trigger event");
                 // 截屏事件由前端处理，后端只负责捕获

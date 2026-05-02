@@ -1,20 +1,15 @@
 use serde::{Deserialize, Serialize};
 
 /// 任务优先级
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskPriority {
+    #[default]
     None,
     Low,
     Medium,
     High,
     Urgent,
-}
-
-impl Default for TaskPriority {
-    fn default() -> Self {
-        TaskPriority::None
-    }
 }
 
 impl TaskPriority {
@@ -40,19 +35,14 @@ impl TaskPriority {
 }
 
 /// 任务状态
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskStatus {
+    #[default]
     Pending,
     InProgress,
     Completed,
     Archived,
-}
-
-impl Default for TaskStatus {
-    fn default() -> Self {
-        TaskStatus::Pending
-    }
 }
 
 impl TaskStatus {
@@ -76,18 +66,13 @@ impl TaskStatus {
 }
 
 /// 来源类型
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum SourceType {
     Screenshot,
+    #[default]
     Manual,
     Import,
-}
-
-impl Default for SourceType {
-    fn default() -> Self {
-        SourceType::Manual
-    }
 }
 
 impl SourceType {

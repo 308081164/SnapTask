@@ -213,17 +213,17 @@ pub fn update_task_status(conn: &Connection, task_id: &str, new_status: &str) ->
     let target = TaskStatus::from_str_value(new_status);
 
     // 验证状态转换
-    let valid = match (&current, &target) {
-        (TaskStatus::Pending, TaskStatus::InProgress) => true,
-        (TaskStatus::Pending, TaskStatus::Archived) => true,
-        (TaskStatus::InProgress, TaskStatus::Completed) => true,
-        (TaskStatus::InProgress, TaskStatus::Pending) => true,
-        (TaskStatus::Completed, TaskStatus::Archived) => true,
-        (TaskStatus::Completed, TaskStatus::InProgress) => true,
-        (TaskStatus::Archived, TaskStatus::Pending) => true,
-        (TaskStatus::Archived, TaskStatus::InProgress) => true,
-        _ => false,
-    };
+    let valid = matches!(
+        (&current, &target),
+        (TaskStatus::Pending, TaskStatus::InProgress)
+            | (TaskStatus::Pending, TaskStatus::Archived)
+            | (TaskStatus::InProgress, TaskStatus::Completed)
+            | (TaskStatus::InProgress, TaskStatus::Pending)
+            | (TaskStatus::Completed, TaskStatus::Archived)
+            | (TaskStatus::Completed, TaskStatus::InProgress)
+            | (TaskStatus::Archived, TaskStatus::Pending)
+            | (TaskStatus::Archived, TaskStatus::InProgress)
+    );
 
     if !valid {
         return Err(rusqlite::Error::QueryReturnedNoRows);

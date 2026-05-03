@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import TaskBoardPage from '@/pages/TaskBoardPage';
 import TimelinePage from '@/pages/TimelinePage';
@@ -90,7 +90,7 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           {/* Floating card window (separate Tauri window) */}
           <Route path="/floating" element={<FloatingCardPage />} />
@@ -103,7 +103,7 @@ const App: React.FC = () => {
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
 
       {/* Reminder Toast */}
       {activeReminder && (

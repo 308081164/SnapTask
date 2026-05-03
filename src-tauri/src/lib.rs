@@ -7,7 +7,7 @@ pub mod commands;
 use std::sync::{Arc, Mutex};
 use tauri::Listener;
 use rusqlite::Connection;
-use log::{info, error};
+use log::{info, error, warn};
 use commands::task_commands::{DbState, create_task, get_task, update_task, delete_task, list_tasks, search_tasks, update_task_status, get_upcoming_tasks};
 use commands::client_commands::{create_client, list_clients, update_client, delete_client};
 use commands::project_commands::{create_project, list_projects, update_project, delete_project};
@@ -19,17 +19,37 @@ use sync::engine::SyncEngine;
 use reminder::scheduler::ReminderScheduler;
 /// Tauri 应用入口
 pub fn run() {
-    // 初始化日志
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
-        .init();
+    // 初始化日志（使用 try_init 避免与其他 logger 冲突导致 panic）
+    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
+        .try_init();
     info!("SnapTask starting...");
     // 初始化数据库
     let db_path = db::init::get_database_path();
     info!("Database path: {}", db_path);
-    let conn = Connection::open(&db_path)
-        .expect("Failed to open database");
-    db::init::init_database(&conn)
-        .expect("Failed to initialize database");
+    let conn = match Connection::open(&db_path) {
+        Ok(c) => c,
+        Err(e) => {
+            error!("Failed to open database at {}: {}", db_path, e);
+            // 尝试创建目录后重试
+            if let Some(parent) = std::path::Path::new(&db_path).parent() {
+                if let Err(e2) = std::fs::create_dir_all(parent) {
+                    error!("Failed to create database directory: {}", e2);
+                }
+            }
+            match Connection::open(&db_path) {
+                Ok(c) => c,
+                Err(e2) => {
+                    error!("Failed to open database after retry: {}", e2);
+                    // 使用内存数据库作为后备
+                    warn!("Falling back to in-memory database");
+                    Connection::open_in_memory().expect("Failed to open in-memory database")
+                }
+            }
+        }
+    };
+    if let Err(e) = db::init::init_database(&conn) {
+        error!("Failed to initialize database: {}", e);
+    }
     info!("Database initialized successfully");
     // 创建同步引擎
     let sync_engine = Arc::new(SyncEngine::new());
@@ -60,20 +80,27 @@ pub fn run() {
             // 启动同步引擎（如果已配置）
             {
                 let db_path = db::init::get_database_path();
-                let conn = Connection::open(&db_path)
-                    .expect("Failed to open database for sync config");
-                let config = sync::config::SyncConfig::from_db(&conn);
-                if config.is_configured() {
-                    sync_engine.start_periodic_sync();
-                    info!("Sync engine started with periodic sync");
-                } else {
-                    info!("Sync engine not started (not configured)");
+                match Connection::open(&db_path) {
+                    Ok(conn) => {
+                        if let Err(e) = db::init::init_database(&conn) {
+                            error!("Failed to initialize database for sync config: {}", e);
+                        }
+                        let config = sync::config::SyncConfig::from_db(&conn);
+                        if config.is_configured() {
+                            sync_engine.start_periodic_sync();
+                            info!("Sync engine started with periodic sync");
+                        } else {
+                            info!("Sync engine not started (not configured)");
+                        }
+                    }
+                    Err(e) => {
+                        error!("Failed to open database for sync config: {}", e);
+                    }
                 }
             }
             // 监听截屏触发事件
             app.listen("screenshot:trigger", move |_event| {
                 info!("Received screenshot:trigger event");
-                // 截屏事件由前端处理，后端只负责捕获
             });
             info!("Tauri app setup completed");
             Ok(())

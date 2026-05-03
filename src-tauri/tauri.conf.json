@@ -20,20 +20,6 @@
         "fullscreen": false,
         "center": true,
         "label": "main"
-      },
-      {
-        "title": "SnapTask Card",
-        "width": 380,
-        "height": 600,
-        "resizable": false,
-        "fullscreen": false,
-        "alwaysOnTop": true,
-        "transparent": true,
-        "decorations": false,
-        "skipTaskbar": true,
-        "visible": false,
-        "label": "floating-card",
-        "url": "floating-card.html"
       }
     ],
     "security": {
@@ -41,7 +27,7 @@
     },
     "trayIcon": {
       "iconPath": "icons/icon.png",
-      "iconAsTemplate": true,
+      "iconAsTemplate": false,
       "id": "main-tray"
     }
   },

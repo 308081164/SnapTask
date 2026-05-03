@@ -75,133 +75,143 @@ impl SyncEngine {
             *r = true;
         }
         let db_path = crate::db::init::get_database_path();
-        tokio::spawn(async move {
-            info!("Sync engine started");
-            loop {
-                // 读取配置（MutexGuard 在块结束时释放）
-                let interval = {
-                    let cfg = config.lock().unwrap();
-                    cfg.sync_interval_secs
-                };
-                tokio::time::sleep(std::time::Duration::from_secs(interval)).await;
-                {
-                    let r = running.lock().unwrap();
-                    if !*r {
-                        break;
-                    }
+        // 在独立线程中创建 Tokio runtime，因为 Tauri 2.x 的 setup 闭包不在 Tokio runtime 上下文中
+        std::thread::spawn(move || {
+            let rt = match tokio::runtime::Runtime::new() {
+                Ok(rt) => rt,
+                Err(e) => {
+                    error!("Failed to create Tokio runtime for sync engine: {}", e);
+                    return;
                 }
-                // 获取 app handle（MutexGuard 在块结束时释放）
-                let handle = {
-                    let app = app_handle.lock().unwrap();
-                    app.clone()
-                };
-                let Some(handle) = handle else {
-                    continue;
-                };
-                // 获取配置（MutexGuard 在块结束时释放）
-                let cfg = {
-                    let c = config.lock().unwrap();
-                    c.clone()
-                };
-                if !cfg.is_configured() {
-                    continue;
-                }
-                // 更新状态
-                {
-                    let mut st = status.lock().unwrap();
-                    st.is_syncing = true;
-                    st.is_online = true;
-                }
-                // emit 同步开始事件
-                let _ = handle.emit("sync:status", serde_json::json!({
-                    "status": "syncing",
-                    "message": "正在同步..."
-                }));
-
-                // 使用 spawn_blocking 执行同步数据库 + HTTP 操作
-                let cfg_clone = cfg.clone();
-                let status_clone = status.clone();
-                let handle_clone = handle.clone();
-                let db_path_clone = db_path.clone();
-
-                let sync_result = tokio::task::spawn_blocking(move || {
-                    // 在阻塞线程中执行所有同步操作
-                    let conn = match Connection::open(&db_path_clone) {
-                        Ok(c) => c,
-                        Err(e) => {
-                            error!("Failed to open database for sync: {}", e);
-                            let mut st = status_clone.lock().unwrap();
-                            st.is_syncing = false;
-                            st.last_error = Some(format!("数据库连接失败: {}", e));
-                            st.is_online = false;
-                            return Err("数据库连接失败".to_string());
-                        }
+            };
+            rt.block_on(async move {
+                info!("Sync engine started");
+                loop {
+                    // 读取配置（MutexGuard 在块结束时释放）
+                    let interval = {
+                        let cfg = config.lock().unwrap();
+                        cfg.sync_interval_secs
                     };
-                    if let Err(e) = crate::db::init::init_database(&conn) {
-                        error!("Failed to initialize database for sync: {}", e);
-                        return Err("数据库初始化失败".to_string());
-                    }
-
-                    // 推送本地变更（同步 HTTP）
-                    match push_changes_sync(&conn, &cfg_clone) {
-                        Ok(count) => {
-                            info!("Pushed {} changes to server", count);
-                        }
-                        Err(e) => {
-                            error!("Failed to push changes: {}", e);
-                            let mut st = status_clone.lock().unwrap();
-                            st.last_error = Some(format!("推送失败: {}", e));
-                            st.is_online = false;
+                    tokio::time::sleep(std::time::Duration::from_secs(interval)).await;
+                    {
+                        let r = running.lock().unwrap();
+                        if !*r {
+                            break;
                         }
                     }
-
-                    // 拉取远端变更（同步 HTTP）
-                    match pull_changes_sync(&conn, &cfg_clone) {
-                        Ok(count) => {
-                            info!("Applied {} remote changes", count);
-                        }
-                        Err(e) => {
-                            error!("Failed to pull changes: {}", e);
-                            let mut st = status_clone.lock().unwrap();
-                            st.last_error = Some(format!("拉取失败: {}", e));
-                        }
+                    // 获取 app handle（MutexGuard 在块结束时释放）
+                    let handle = {
+                        let app = app_handle.lock().unwrap();
+                        app.clone()
+                    };
+                    let Some(handle) = handle else {
+                        continue;
+                    };
+                    // 获取配置（MutexGuard 在块结束时释放）
+                    let cfg = {
+                        let c = config.lock().unwrap();
+                        c.clone()
+                    };
+                    if !cfg.is_configured() {
+                        continue;
                     }
-
                     // 更新状态
                     {
-                        let mut st = status_clone.lock().unwrap();
-                        st.is_syncing = false;
-                        st.last_sync_at = Some(chrono::Utc::now().to_rfc3339());
+                        let mut st = status.lock().unwrap();
+                        st.is_syncing = true;
                         st.is_online = true;
-                        let device_id = sync_db::get_device_id(&conn).unwrap_or_default();
-                        st.pending_changes = sync_db::get_unsynced_changes(&conn, &device_id)
-                            .map(|c| c.len() as u64)
-                            .unwrap_or(0);
                     }
+                    // emit 同步开始事件
+                    let _ = handle.emit("sync:status", serde_json::json!({
+                        "status": "syncing",
+                        "message": "\u{6b63}\u{5728}\u{540c}\u{6b65}..."
+                    }));
 
-                    // 返回最终状态用于 emit
-                    let st = status_clone.lock().unwrap().clone();
-                    Ok(st)
-                }).await;
+                    // 使用 spawn_blocking 执行同步数据库 + HTTP 操作
+                    let cfg_clone = cfg.clone();
+                    let status_clone = status.clone();
+                    let handle_clone = handle.clone();
+                    let db_path_clone = db_path.clone();
 
-                match sync_result {
-                    Ok(Ok(st)) => {
-                        let _ = handle_clone.emit("sync:status", serde_json::json!({
-                            "status": "completed",
-                            "message": "同步完成",
-                            "last_sync_at": st.last_sync_at,
-                            "pending_changes": st.pending_changes,
-                        }));
-                    }
-                    Ok(Err(e)) => {
-                        error!("Sync failed: {}", e);
-                    }
-                    Err(e) => {
-                        error!("Sync task panicked: {}", e);
+                    let sync_result = tokio::task::spawn_blocking(move || {
+                        // 在阻塞线程中执行所有同步操作
+                        let conn = match Connection::open(&db_path_clone) {
+                            Ok(c) => c,
+                            Err(e) => {
+                                error!("Failed to open database for sync: {}", e);
+                                let mut st = status_clone.lock().unwrap();
+                                st.is_syncing = false;
+                                st.last_error = Some(format!("\u{6570}\u{636e}\u{5e93}\u{8fde}\u{63a5}\u{5931}\u{8d25}: {}", e));
+                                st.is_online = false;
+                                return Err("\u{6570}\u{636e}\u{5e93}\u{8fde}\u{63a5}\u{5931}\u{8d25}".to_string());
+                            }
+                        };
+                        if let Err(e) = crate::db::init::init_database(&conn) {
+                            error!("Failed to initialize database for sync: {}", e);
+                            return Err("\u{6570}\u{636e}\u{5e93}\u{521d}\u{59cb}\u{5316}\u{5931}\u{8d25}".to_string());
+                        }
+
+                        // 推送本地变更（同步 HTTP）
+                        match push_changes_sync(&conn, &cfg_clone) {
+                            Ok(count) => {
+                                info!("Pushed {} changes to server", count);
+                            }
+                            Err(e) => {
+                                error!("Failed to push changes: {}", e);
+                                let mut st = status_clone.lock().unwrap();
+                                st.last_error = Some(format!("\u{63a8}\u{9001}\u{5931}\u{8d25}: {}", e));
+                                st.is_online = false;
+                            }
+                        }
+
+                        // 拉取远端变更（同步 HTTP）
+                        match pull_changes_sync(&conn, &cfg_clone) {
+                            Ok(count) => {
+                                info!("Applied {} remote changes", count);
+                            }
+                            Err(e) => {
+                                error!("Failed to pull changes: {}", e);
+                                let mut st = status_clone.lock().unwrap();
+                                st.last_error = Some(format!("\u{62c9}\u{53d6}\u{5931}\u{8d25}: {}", e));
+                            }
+                        }
+
+                        // 更新状态
+                        {
+                            let mut st = status_clone.lock().unwrap();
+                            st.is_syncing = false;
+                            st.last_sync_at = Some(chrono::Utc::now().to_rfc3339());
+                            st.is_online = true;
+                            let device_id = sync_db::get_device_id(&conn).unwrap_or_default();
+                            st.pending_changes = sync_db::get_unsynced_changes(&conn, &device_id)
+                                .map(|c| c.len() as u64)
+                                .unwrap_or(0);
+                        }
+
+                        // 返回最终状态用于 emit
+                        let st = status_clone.lock().unwrap().clone();
+                        Ok(st)
+                    }).await;
+
+                    match sync_result {
+                        Ok(Ok(st)) => {
+                            let _ = handle_clone.emit("sync:status", serde_json::json!({
+                                "status": "completed",
+                                "message": "\u{540c}\u{6b65}\u{5b8c}\u{6210}",
+                                "last_sync_at": st.last_sync_at,
+                                "pending_changes": st.pending_changes,
+                            }));
+                        }
+                        Ok(Err(e)) => {
+                            error!("Sync failed: {}", e);
+                        }
+                        Err(e) => {
+                            error!("Sync task panicked: {}", e);
+                        }
                     }
                 }
-            }
-            info!("Sync engine stopped");
+                info!("Sync engine stopped");
+            });
         });
     }
 
@@ -220,7 +230,7 @@ impl SyncEngine {
             c.clone()
         };
         if !cfg.is_configured() {
-            return Err("同步未配置，请先设置服务器地址和 API Key".to_string());
+            return Err("\u{540c}\u{6b65}\u{672a}\u{914d}\u{7f6e}\uff0c\u{8bf7}\u{5148}\u{8bbe}\u{7f6e}\u{670d}\u{52a1}\u{5668}\u{5730}\u{5740}\u{548c} API Key".to_string());
         }
 
         // 使用 spawn_blocking 执行同步数据库 + HTTP 操作
@@ -229,16 +239,16 @@ impl SyncEngine {
 
         tokio::task::spawn_blocking(move || {
             let conn = Connection::open(&db_path)
-                .map_err(|e| format!("数据库连接失败: {}", e))?;
+                .map_err(|e| format!("\u{6570}\u{636e}\u{5e93}\u{8fde}\u{63a5}\u{5931}\u{8d25}: {}", e))?;
             crate::db::init::init_database(&conn)
-                .map_err(|e| format!("数据库初始化失败: {}", e))?;
+                .map_err(|e| format!("\u{6570}\u{636e}\u{5e93}\u{521d}\u{59cb}\u{5316}\u{5931}\u{8d25}: {}", e))?;
 
             // 推送
             push_changes_sync(&conn, &cfg)
-                .map_err(|e| format!("推送失败: {}", e))?;
+                .map_err(|e| format!("\u{63a8}\u{9001}\u{5931}\u{8d25}: {}", e))?;
             // 拉取
             pull_changes_sync(&conn, &cfg)
-                .map_err(|e| format!("拉取失败: {}", e))?;
+                .map_err(|e| format!("\u{62c9}\u{53d6}\u{5931}\u{8d25}: {}", e))?;
 
             // 更新状态
             {
@@ -258,14 +268,14 @@ impl SyncEngine {
                     let st = status.lock().unwrap();
                     let _ = handle.emit("sync:status", serde_json::json!({
                         "status": "completed",
-                        "message": "同步完成",
+                        "message": "\u{540c}\u{6b65}\u{5b8c}\u{6210}",
                         "last_sync_at": st.last_sync_at,
                         "pending_changes": st.pending_changes,
                     }));
                 }
             }
             Ok::<(), String>(())
-        }).await.map_err(|e| format!("同步任务执行失败: {}", e))??;
+        }).await.map_err(|e| format!("\u{540c}\u{6b65}\u{4efb}\u{52a1}\u{6267}\u{884c}\u{5931}\u{8d25}: {}", e))??;
 
         Ok(())
     }

@@ -230,7 +230,7 @@ impl SyncEngine {
             c.clone()
         };
         if !cfg.is_configured() {
-            return Err("\u{540c}\u{6b65}\u{672a}\u{914d}\u{7f6e}\uff0c\u{8bf7}\u{5148}\u{8bbe}\u{7f6e}\u{670d}\u{52a1}\u{5668}\u{5730}\u{5740}\u{548c} API Key".to_string());
+            return Err("同步未配置，请先设置服务器地址和 API Key".to_string());
         }
 
         // 使用 spawn_blocking 执行同步数据库 + HTTP 操作

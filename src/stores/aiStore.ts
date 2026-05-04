@@ -18,9 +18,9 @@ interface AIState {
 
 const defaultAiConfig: AIConfig = {
   api_key: '',
-  model: 'gpt-4o',
-  api_endpoint: 'https://api.openai.com/v1',
-  max_tokens: 2000,
+  model: 'qwen-vl-max',
+  api_endpoint: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+  max_tokens: 4096,
   temperature: 0.3,
 };
 

@@ -92,12 +92,24 @@ export const Settings: React.FC = () => {
                   value={settings.aiConfig.model}
                   onChange={(e) => settings.updateAiConfig({ model: e.target.value })}
                 >
-                  <option value="gpt-4o">GPT-4o</option>
-                  <option value="gpt-4o-mini">GPT-4o Mini</option>
-                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                  <option value="claude-3-opus">Claude 3 Opus</option>
-                  <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                  <optgroup label="通义千问 (阿里云)">
+                    <option value="qwen-vl-max">Qwen-VL Max (推荐)</option>
+                    <option value="qwen-vl-plus">Qwen-VL Plus</option>
+                    <option value="qwen2.5-vl-72b-instruct">Qwen2.5-VL 72B</option>
+                    <option value="qwen2.5-vl-7b-instruct">Qwen2.5-VL 7B</option>
+                    <option value="qwen-max">Qwen Max (纯文本)</option>
+                    <option value="qwen-plus">Qwen Plus (纯文本)</option>
+                  </optgroup>
+                  <optgroup label="OpenAI">
+                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                  </optgroup>
+                  <optgroup label="Anthropic">
+                    <option value="claude-3-opus">Claude 3 Opus</option>
+                    <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -107,7 +119,7 @@ export const Settings: React.FC = () => {
                   className={styles.input}
                   value={settings.aiConfig.api_endpoint}
                   onChange={(e) => settings.updateAiConfig({ api_endpoint: e.target.value })}
-                  placeholder="https://api.openai.com/v1"
+                  placeholder="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
                 />
               </div>
 

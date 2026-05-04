@@ -3,33 +3,32 @@ use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut,
 use log::{info, error};
 
 /// 注册全局快捷键
-/// 使用 Alt+Shift 组合，避免与 Windows 系统热键（Ctrl+Shift+S 语音输入等）及浏览器快捷键冲突
+/// 使用 Ctrl + 数字键盘组合，几乎不与任何系统/应用热键冲突
 pub fn register_hotkeys(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
-    // Alt+Shift+S: 区域截图快捷键
-    let area_shortcut = Shortcut::new(Some(Modifiers::ALT | Modifiers::SHIFT), Code::KeyS);
+    // Ctrl+Numpad1: 区域截图快捷键
+    let area_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad1);
     if let Err(e) = app.global_shortcut().on_shortcut(area_shortcut, |_app: &AppHandle, _shortcut, _event: ShortcutEvent| {
-        info!("Hotkey triggered: area screenshot (Alt+Shift+S)");
-        // 通知前端进行区域截图
+        info!("Hotkey triggered: area screenshot (Ctrl+Numpad1)");
         if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({"mode": "area"})) {
             error!("Failed to emit screenshot:trigger event: {}", e);
         }
     }) {
         error!("Failed to register area screenshot shortcut: {}", e);
     }
-    // Alt+Shift+A: 全屏截图快捷键
-    let full_shortcut = Shortcut::new(Some(Modifiers::ALT | Modifiers::SHIFT), Code::KeyA);
+    // Ctrl+Numpad2: 全屏截图快捷键
+    let full_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad2);
     if let Err(e) = app.global_shortcut().on_shortcut(full_shortcut, |_app: &AppHandle, _shortcut, _event: ShortcutEvent| {
-        info!("Hotkey triggered: full screenshot (Alt+Shift+A)");
+        info!("Hotkey triggered: full screenshot (Ctrl+Numpad2)");
         if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({"mode": "full"})) {
             error!("Failed to emit screenshot:trigger event: {}", e);
         }
     }) {
         error!("Failed to register full screenshot shortcut: {}", e);
     }
-    // Alt+Shift+W: 当前窗口截图快捷键
-    let window_shortcut = Shortcut::new(Some(Modifiers::ALT | Modifiers::SHIFT), Code::KeyW);
+    // Ctrl+Numpad3: 当前窗口截图快捷键
+    let window_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad3);
     if let Err(e) = app.global_shortcut().on_shortcut(window_shortcut, |_app: &AppHandle, _shortcut, _event: ShortcutEvent| {
-        info!("Hotkey triggered: window screenshot (Alt+Shift+W)");
+        info!("Hotkey triggered: window screenshot (Ctrl+Numpad3)");
         if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({"mode": "window"})) {
             error!("Failed to emit screenshot:trigger event: {}", e);
         }
@@ -42,9 +41,9 @@ pub fn register_hotkeys(app: &AppHandle) -> Result<(), Box<dyn std::error::Error
 
 /// 注销全局快捷键
 pub fn unregister_hotkeys(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
-    let area_shortcut = Shortcut::new(Some(Modifiers::ALT | Modifiers::SHIFT), Code::KeyS);
-    let full_shortcut = Shortcut::new(Some(Modifiers::ALT | Modifiers::SHIFT), Code::KeyA);
-    let window_shortcut = Shortcut::new(Some(Modifiers::ALT | Modifiers::SHIFT), Code::KeyW);
+    let area_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad1);
+    let full_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad2);
+    let window_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad3);
     let _ = app.global_shortcut().unregister(area_shortcut);
     let _ = app.global_shortcut().unregister(full_shortcut);
     let _ = app.global_shortcut().unregister(window_shortcut);

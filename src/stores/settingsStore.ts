@@ -21,10 +21,10 @@ interface SettingsState {
 }
 
 const defaultHotkeys: Record<string, string> = {
-  screenshot: 'Alt+Shift+S',
-  newTask: 'Alt+Shift+N',
-  search: 'Alt+Shift+K',
-  toggleSidebar: 'Alt+Shift+B',
+  screenshot: 'Ctrl+Numpad1',
+  newTask: 'Ctrl+Numpad4',
+  search: 'Ctrl+Numpad5',
+  toggleSidebar: 'Ctrl+Numpad0',
 };
 
 const defaultAiConfig: AIConfig = {

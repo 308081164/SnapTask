@@ -20,6 +20,24 @@
         "fullscreen": false,
         "center": true,
         "label": "main"
+      },
+      {
+        "title": "SnapTask - 悬浮待办",
+        "label": "floating-card",
+        "url": "/#/floating",
+        "width": 340,
+        "height": 500,
+        "minWidth": 340,
+        "minHeight": 200,
+        "resizable": true,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "center": false,
+        "x": 50,
+        "y": 50,
+        "visible": false
       }
     ],
     "security": {

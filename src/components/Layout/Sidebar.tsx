@@ -9,8 +9,10 @@ import {
   PanelLeftOpen,
   RefreshCw,
   Zap,
+  StickyNote,
 } from 'lucide-react';
 import { useSyncStore } from '@/stores/syncStore';
+import { floatingCardApi } from '@/lib/tauri';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -28,6 +30,16 @@ const navItems = [
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const location = useLocation();
   const { syncStatus, triggerSync } = useSyncStore();
+  const [floatingVisible, setFloatingVisible] = React.useState(false);
+
+  const handleToggleFloating = async () => {
+    try {
+      const visible = await floatingCardApi.toggleFloatingCard();
+      setFloatingVisible(visible);
+    } catch (e) {
+      console.error('Failed to toggle floating card:', e);
+    }
+  };
 
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
@@ -83,6 +95,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             </span>
           )}
         </div>
+
+        {/* Floating Card Toggle */}
+        <button
+          className={`${styles.syncBtn} ${floatingVisible ? styles.floatingActive : ''}`}
+          onClick={handleToggleFloating}
+          title={collapsed ? '悬浮待办' : undefined}
+        >
+          <StickyNote size={16} className={styles.syncIcon} />
+          {!collapsed && (
+            <span className={styles.syncLabel}>悬浮待办</span>
+          )}
+        </button>
 
         {/* Collapse Toggle */}
         <button className={styles.collapseBtn} onClick={onToggle} title="折叠侧边栏">

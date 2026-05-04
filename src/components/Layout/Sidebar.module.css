@@ -122,6 +122,11 @@
   cursor: not-allowed;
 }
 
+.floatingActive {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
 .syncIcon {
   flex-shrink: 0;
 }

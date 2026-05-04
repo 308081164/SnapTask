@@ -5,3 +5,4 @@ pub mod ai_commands;
 pub mod reminder_commands;
 pub mod sync_commands;
 pub mod screenshot_commands;
+pub mod window_commands;

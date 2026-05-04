@@ -191,6 +191,26 @@ export const settingsApi = {
   },
 };
 
+// ==================== 悬浮窗口 API ====================
+
+export const floatingCardApi = {
+  toggleFloatingCard(): Promise<boolean> {
+    return invokeCommand('toggle_floating_card');
+  },
+
+  showFloatingCard(): Promise<void> {
+    return invokeCommand('show_floating_card');
+  },
+
+  hideFloatingCard(): Promise<void> {
+    return invokeCommand('hide_floating_card');
+  },
+
+  isFloatingCardVisible(): Promise<boolean> {
+    return invokeCommand('is_floating_card_visible');
+  },
+};
+
 // ==================== 事件监听 ====================
 
 export interface EventListeners {

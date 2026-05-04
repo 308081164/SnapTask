@@ -15,6 +15,7 @@ use commands::ai_commands::{analyze_screenshot, confirm_analysis, get_ai_config,
 use commands::reminder_commands::{create_reminder, list_reminders, update_reminder, delete_reminder};
 use commands::sync_commands::{SyncEngineState, trigger_sync, get_sync_status, get_sync_config, update_sync_config};
 use commands::screenshot_commands::{ScreenshotCache, trigger_screenshot, get_screenshot};
+use commands::window_commands::{toggle_floating_card, show_floating_card, hide_floating_card, is_floating_card_visible};
 use sync::engine::SyncEngine;
 use reminder::scheduler::ReminderScheduler;
 /// Tauri 应用入口
@@ -143,6 +144,11 @@ pub fn run() {
             // 截屏命令
             trigger_screenshot,
             get_screenshot,
+            // 窗口命令
+            toggle_floating_card,
+            show_floating_card,
+            hide_floating_card,
+            is_floating_card_visible,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

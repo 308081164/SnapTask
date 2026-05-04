@@ -1,8 +1,8 @@
-use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{AppHandle, Manager};
 
-/// 打开悬浮待办窗口
+/// 打开/关闭悬浮待办窗口
 #[tauri::command]
-pub fn toggle_floating_card(app: AppHandle) -> Result<bool, String> {
+pub async fn toggle_floating_card(app: AppHandle) -> Result<bool, String> {
     let label = "floating-card";
     if let Some(window) = app.get_webview_window(label) {
         if window.is_visible().unwrap_or(false) {
@@ -14,22 +14,15 @@ pub fn toggle_floating_card(app: AppHandle) -> Result<bool, String> {
             Ok(true)
         }
     } else {
-        // 窗口不存在，创建新窗口
-        let window = WebviewWindowBuilder::new(
-            &app,
-            label,
-            WebviewUrl::App("/#/floating".into()),
-        )
-        .title("SnapTask - 悬浮待办")
-        .inner_size(340.0, 500.0)
-        .min_inner_size(340.0, 200.0)
-        .decorations(false)
-        .transparent(true)
-        .always_on_top(true)
-        .skip_taskbar(true)
-        .position(50.0, 50.0)
-        .build()
-        .map_err(|e| format!("Failed to create floating window: {}", e))?;
+        // 从 tauri.conf.json 中读取 floating-card 窗口配置并创建
+        let config = app.config().app.windows.iter()
+            .find(|w| w.label == label)
+            .cloned()
+            .ok_or("floating-card window config not found")?;
+        let window = tauri::WebviewWindowBuilder::from_config(&app, &config)
+            .map_err(|e| format!("Failed to create floating window: {}", e))?
+            .build()
+            .map_err(|e| format!("Failed to build floating window: {}", e))?;
         let _ = window.show();
         let _ = window.set_focus();
         Ok(true)
@@ -38,27 +31,20 @@ pub fn toggle_floating_card(app: AppHandle) -> Result<bool, String> {
 
 /// 显示悬浮待办窗口
 #[tauri::command]
-pub fn show_floating_card(app: AppHandle) -> Result<(), String> {
+pub async fn show_floating_card(app: AppHandle) -> Result<(), String> {
     let label = "floating-card";
     if let Some(window) = app.get_webview_window(label) {
         let _ = window.show();
         let _ = window.set_focus();
     } else {
-        let window = WebviewWindowBuilder::new(
-            &app,
-            label,
-            WebviewUrl::App("/#/floating".into()),
-        )
-        .title("SnapTask - 悬浮待办")
-        .inner_size(340.0, 500.0)
-        .min_inner_size(340.0, 200.0)
-        .decorations(false)
-        .transparent(true)
-        .always_on_top(true)
-        .skip_taskbar(true)
-        .position(50.0, 50.0)
-        .build()
-        .map_err(|e| format!("Failed to create floating window: {}", e))?;
+        let config = app.config().app.windows.iter()
+            .find(|w| w.label == label)
+            .cloned()
+            .ok_or("floating-card window config not found")?;
+        let window = tauri::WebviewWindowBuilder::from_config(&app, &config)
+            .map_err(|e| format!("Failed to create floating window: {}", e))?
+            .build()
+            .map_err(|e| format!("Failed to build floating window: {}", e))?;
         let _ = window.show();
         let _ = window.set_focus();
     }

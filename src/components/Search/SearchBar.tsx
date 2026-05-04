@@ -49,7 +49,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <X size={14} />
         </button>
       )}
-      <kbd className={styles.shortcut}>Ctrl+K</kbd>
+      <kbd className={styles.shortcut}>Alt+Shift+K</kbd>
     </div>
   );
 };

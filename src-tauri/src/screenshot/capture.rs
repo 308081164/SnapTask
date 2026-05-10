@@ -101,7 +101,7 @@ fn capture_window_macos() -> Result<Vec<u8>> {
 
 #[cfg(target_os = "windows")]
 fn capture_screen_windows() -> Result<Vec<u8>> {
-    // 使用 PowerShell 截屏
+    // 使用 PowerShell 截屏，隐藏窗口避免闪烁
     let ps_script = r#"
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -115,7 +115,7 @@ $ms.Close()
 [Convert]::ToBase64String($ms.ToArray())
 "#;
     let output = Command::new("powershell")
-        .args(["-NoProfile", "-Command", ps_script])
+        .args(["-WindowStyle", "Hidden", "-NoProfile", "-Command", ps_script])
         .output()
         .context("Failed to execute PowerShell for screenshot")?;
     if !output.status.success() {
@@ -144,7 +144,7 @@ $ms.Close()
         width, height, x, y, width, height
     );
     let output = Command::new("powershell")
-        .args(["-NoProfile", "-Command", &ps_script])
+        .args(["-WindowStyle", "Hidden", "-NoProfile", "-Command", &ps_script])
         .output()
         .context("Failed to execute PowerShell for area screenshot")?;
     if !output.status.success() {
@@ -191,7 +191,7 @@ $ms.Close()
 [Convert]::ToBase64String($ms.ToArray())
 "#;
     let output = Command::new("powershell")
-        .args(["-NoProfile", "-Command", ps_script])
+        .args(["-WindowStyle", "Hidden", "-NoProfile", "-Command", ps_script])
         .output()
         .context("Failed to execute PowerShell for window screenshot")?;
     if !output.status.success() {

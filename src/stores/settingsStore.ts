@@ -17,6 +17,7 @@ interface SettingsState {
   updateHotkey: (action: string, key: string) => void;
   updateAiConfig: (config: Partial<AIConfig>) => void;
   updateSyncConfig: (config: Partial<SyncConfig>) => void;
+  saveAllSettings: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -96,6 +97,23 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set((state) => ({
       syncConfig: { ...state.syncConfig, ...config },
     }));
+  },
+
+  saveAllSettings: async () => {
+    const state = get();
+    try {
+      await settingsApi.updateSettings({
+        theme: state.theme,
+        hotkeys: state.hotkeys,
+        ai_config: state.aiConfig,
+        sync_config: state.syncConfig,
+        floating_card_opacity: state.floatingCardOpacity,
+      });
+      console.log('设置已保存到数据库');
+    } catch (error) {
+      console.error('保存设置失败:', error);
+      throw error;
+    }
   },
 
   clearError: () => {

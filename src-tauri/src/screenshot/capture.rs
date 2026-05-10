@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use image::ImageEncoder;
+use log::{info, error, warn};
 use std::io::Cursor;
 
 #[cfg(any(target_os = "macos", target_os = "windows"))]
@@ -62,7 +63,7 @@ pub fn capture_window() -> Result<Vec<u8>> {
 fn capture_screen_macos() -> Result<Vec<u8>> {
     let output = Command::new("screencapture")
         .arg("-x")
-        .arg("-C")  // 不播放声音
+        .arg("-C")
         .output()
         .context("Failed to execute screencapture")?;
     if !output.status.success() {
@@ -104,7 +105,7 @@ fn capture_window_macos() -> Result<Vec<u8>> {
 
 #[cfg(target_os = "windows")]
 fn capture_screen_windows() -> Result<Vec<u8>> {
-    // 使用 PowerShell 截屏，使用 CREATE_NO_WINDOW 标志避免闪现窗口
+    info!("Starting Windows screen capture...");
     let ps_script = r#"
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -117,22 +118,39 @@ $bitmap.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
 $ms.Close()
 [Convert]::ToBase64String($ms.ToArray())
 "#;
+    
+    info!("Executing PowerShell with CREATE_NO_WINDOW flag...");
     let output = Command::new("powershell")
         .creation_flags(0x08000000) // CREATE_NO_WINDOW
         .args(["-NoProfile", "-Command", ps_script])
         .output()
         .context("Failed to execute PowerShell for screenshot")?;
+    
+    info!("PowerShell exit code: {:?}", output.status);
+    
     if !output.status.success() {
-        anyhow::bail!("PowerShell screenshot failed: {}", String::from_utf8_lossy(&output.stderr));
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        error!("PowerShell screenshot failed: {}", stderr);
+        anyhow::bail!("PowerShell screenshot failed: {}", stderr);
     }
-    let b64_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    info!("PowerShell output length: {} bytes", stdout.len());
+    
+    let b64_str = stdout.trim().to_string();
     let png_bytes = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &b64_str)
-        .map_err(|e| anyhow::anyhow!("Failed to decode screenshot base64: {}", e))?;
+        .map_err(|e| {
+            error!("Failed to decode screenshot base64: {}", e);
+            anyhow::anyhow!("Failed to decode screenshot base64: {}", e)
+        })?;
+    
+    info!("Screenshot captured successfully, size: {} bytes", png_bytes.len());
     Ok(png_bytes)
 }
 
 #[cfg(target_os = "windows")]
 fn capture_area_windows(x: i32, y: i32, width: i32, height: i32) -> Result<Vec<u8>> {
+    info!("Starting Windows area capture: x={}, y={}, width={}, height={}", x, y, width, height);
     let ps_script = format!(
         r#"
 Add-Type -AssemblyName System.Windows.Forms
@@ -147,14 +165,17 @@ $ms.Close()
 "#,
         width, height, x, y, width, height
     );
+    
     let output = Command::new("powershell")
         .creation_flags(0x08000000) // CREATE_NO_WINDOW
         .args(["-NoProfile", "-Command", &ps_script])
         .output()
         .context("Failed to execute PowerShell for area screenshot")?;
+    
     if !output.status.success() {
         anyhow::bail!("PowerShell area screenshot failed: {}", String::from_utf8_lossy(&output.stderr));
     }
+    
     let b64_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
     let png_bytes = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &b64_str)
         .map_err(|e| anyhow::anyhow!("Failed to decode area screenshot base64: {}", e))?;
@@ -163,7 +184,7 @@ $ms.Close()
 
 #[cfg(target_os = "windows")]
 fn capture_window_windows() -> Result<Vec<u8>> {
-    // Windows 窗口截图使用 PowerShell 获取前台窗口
+    info!("Starting Windows window capture...");
     let ps_script = r#"
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -192,14 +213,17 @@ $bitmap.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
 $ms.Close()
 [Convert]::ToBase64String($ms.ToArray())
 "#;
+    
     let output = Command::new("powershell")
         .creation_flags(0x08000000) // CREATE_NO_WINDOW
         .args(["-NoProfile", "-Command", ps_script])
         .output()
         .context("Failed to execute PowerShell for window screenshot")?;
+    
     if !output.status.success() {
         anyhow::bail!("PowerShell window screenshot failed: {}", String::from_utf8_lossy(&output.stderr));
     }
+    
     let b64_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
     let png_bytes = base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &b64_str)
         .map_err(|e| anyhow::anyhow!("Failed to decode window screenshot base64: {}", e))?;

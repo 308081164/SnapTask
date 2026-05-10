@@ -20,11 +20,21 @@ export const Settings: React.FC = () => {
   const settings = useSettingsStore();
   const [activeTab, setActiveTab] = useState('ai');
   const [showApiKey, setShowApiKey] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await settings.saveAllSettings();
+      setTimeout(() => {}, 2000);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : '保存失败');
+      console.error('保存设置失败:', error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const tabs = [
@@ -151,8 +161,19 @@ export const Settings: React.FC = () => {
                 </div>
               </div>
 
-              <Button variant="primary" onClick={handleSave} icon={<Save size={14} />}>
-                {saved ? '已保存' : '保存配置'}
+              {saveError && (
+                <div className={styles.errorMessage} style={{ color: '#dc3545', marginBottom: '16px' }}>
+                  保存失败: {saveError}
+                </div>
+              )}
+
+              <Button 
+                variant="primary" 
+                onClick={handleSave} 
+                icon={saving ? undefined : <Save size={14} />}
+                disabled={saving}
+              >
+                {saving ? '保存中...' : '保存配置'}
               </Button>
             </div>
           )}
@@ -210,8 +231,13 @@ export const Settings: React.FC = () => {
                 </button>
               </div>
 
-              <Button variant="primary" onClick={handleSave} icon={<Save size={14} />}>
-                {saved ? '已保存' : '保存配置'}
+              <Button 
+                variant="primary" 
+                onClick={handleSave} 
+                icon={saving ? undefined : <Save size={14} />}
+                disabled={saving}
+              >
+                {saving ? '保存中...' : '保存配置'}
               </Button>
             </div>
           )}
@@ -233,6 +259,15 @@ export const Settings: React.FC = () => {
                   <kbd className={styles.hotkeyValue}>{key}</kbd>
                 </div>
               ))}
+
+              <Button 
+                variant="primary" 
+                onClick={handleSave} 
+                icon={saving ? undefined : <Save size={14} />}
+                disabled={saving}
+              >
+                {saving ? '保存中...' : '保存配置'}
+              </Button>
             </div>
           )}
 
@@ -276,6 +311,15 @@ export const Settings: React.FC = () => {
                   {Math.round(settings.floatingCardOpacity * 100)}%
                 </span>
               </div>
+
+              <Button 
+                variant="primary" 
+                onClick={handleSave} 
+                icon={saving ? undefined : <Save size={14} />}
+                disabled={saving}
+              >
+                {saving ? '保存中...' : '保存配置'}
+              </Button>
             </div>
           )}
 
@@ -303,7 +347,7 @@ export const Settings: React.FC = () => {
               <div className={styles.aboutInfo}>
                 <div className={styles.aboutRow}>
                   <span className={styles.aboutLabel}>版本</span>
-                  <span className={styles.aboutValue}>0.1.0</span>
+                  <span className={styles.aboutValue}>1.2.0</span>
                 </div>
                 <div className={styles.aboutRow}>
                   <span className={styles.aboutLabel}>描述</span>

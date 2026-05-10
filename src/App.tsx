@@ -12,6 +12,8 @@ import { useTaskStore } from '@/stores/taskStore';
 import { useAIStore } from '@/stores/aiStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { registerEventListeners } from '@/lib/tauri';
+import { screenshotApi } from '@/lib/tauri';
+import { listen } from '@tauri-apps/api/event';
 import { initTheme } from '@/utils/theme';
 import { TaskStatus } from '@/types';
 import type { ScreenshotEvent, ReminderEvent, SyncEvent } from '@/types';
@@ -44,6 +46,22 @@ const App: React.FC = () => {
     if (!isTauri) return;
 
     let cleanupFn: (() => void) | undefined;
+    const unlisteners: Array<() => void> = [];
+
+    // 监听热键触发的截图事件（来自后端 hotkey.rs）
+    listen<{ mode: string }>('screenshot:trigger', async (event) => {
+      const mode = event.payload?.mode || 'full';
+      console.log('Hotkey screenshot triggered, mode:', mode);
+      try {
+        const imageBase64 = await screenshotApi.triggerScreenshot(mode);
+        const { analyzeScreenshot } = useAIStore.getState();
+        analyzeScreenshot(imageBase64);
+      } catch (error) {
+        console.error('Hotkey screenshot failed:', error);
+      }
+    }).then((unlisten) => {
+      unlisteners.push(unlisten);
+    });
 
     registerEventListeners({
       screenshot: (event: ScreenshotEvent) => {
@@ -65,6 +83,7 @@ const App: React.FC = () => {
 
     return () => {
       if (cleanupFn) cleanupFn();
+      unlisteners.forEach((fn) => fn());
     };
   }, [isTauri]);
 

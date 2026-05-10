@@ -9,8 +9,9 @@ pub struct ScreenshotCache(pub Mutex<Option<Vec<u8>>>);
 pub fn trigger_screenshot(
     app_handle: AppHandle,
     state: State<'_, ScreenshotCache>,
-    mode: String,
+    mode: Option<String>,
 ) -> Result<String, String> {
+    let mode = mode.unwrap_or_else(|| "full".to_string());
     info!("Screenshot triggered with mode: {}", mode);
     let result = match mode.as_str() {
         "full" => capture::capture_screen(),

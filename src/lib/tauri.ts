@@ -170,8 +170,8 @@ export const syncApi = {
 // ==================== 截屏 API ====================
 
 export const screenshotApi = {
-  triggerScreenshot(): Promise<string> {
-    return invokeCommand('trigger_screenshot');
+  triggerScreenshot(mode?: string): Promise<string> {
+    return invokeCommand('trigger_screenshot', { mode: mode || 'full' });
   },
 
   getScreenshot(): Promise<string> {

@@ -1,9 +1,11 @@
 use tauri::{AppHandle, Emitter, State};
-use std::sync::Mutex;
+use std::sync::{Mutex, Arc};
 use crate::screenshot::capture;
 use log::{info, error};
-/// 最近一次截图的缓存
-pub struct ScreenshotCache(pub Mutex<Option<Vec<u8>>>);
+
+/// 截图缓存
+pub struct ScreenshotCache(pub Arc<Mutex<Option<Vec<u8>>>>);
+
 /// 触发截屏
 #[tauri::command]
 pub fn trigger_screenshot(
@@ -13,18 +15,16 @@ pub fn trigger_screenshot(
 ) -> Result<String, String> {
     let mode = mode.unwrap_or_else(|| "full".to_string());
     info!("Screenshot triggered with mode: {}", mode);
+    
     let result = match mode.as_str() {
         "full" => capture::capture_screen(),
-        "area" => {
-            // 区域截屏需要前端提供坐标，这里先进行全屏截屏
-            // 前端可以通过选区工具获取坐标后再次调用
-            capture::capture_screen()
-        }
+        "area" => capture::capture_screen(),
         "window" => capture::capture_window(),
         _ => {
             return Err(format!("Unknown screenshot mode: {}", mode));
         }
     };
+    
     match result {
         Ok(data) => {
             // 缓存截图
@@ -53,6 +53,7 @@ pub fn trigger_screenshot(
         }
     }
 }
+
 /// 获取最近一次截图的 base64
 #[tauri::command]
 pub fn get_screenshot(state: State<'_, ScreenshotCache>) -> Result<Option<String>, String> {

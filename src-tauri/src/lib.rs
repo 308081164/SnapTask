@@ -19,12 +19,14 @@ use commands::window_commands::{toggle_floating_card, show_floating_card, hide_f
 use commands::settings_commands::{get_settings, update_settings};
 use sync::engine::SyncEngine;
 use reminder::scheduler::ReminderScheduler;
+
 /// Tauri 应用入口
 pub fn run() {
     // 初始化日志（使用 try_init 避免与其他 logger 冲突导致 panic）
     let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .try_init();
     info!("SnapTask starting...");
+    
     // 初始化数据库
     let db_path = db::init::get_database_path();
     info!("Database path: {}", db_path);
@@ -53,11 +55,17 @@ pub fn run() {
         error!("Failed to initialize database: {}", e);
     }
     info!("Database initialized successfully");
+    
     // 创建同步引擎
     let sync_engine = Arc::new(SyncEngine::new());
     sync_engine.load_config(&conn);
+    
     // 创建提醒调度器
     let reminder_scheduler = ReminderScheduler::new();
+    
+    // 创建截图缓存
+    let screenshot_cache = Arc::new(Mutex::new(None::<Vec<u8>>));
+    
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_shell::init())
@@ -65,20 +73,27 @@ pub fn run() {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .manage(DbState(Mutex::new(conn)))
         .manage(SyncEngineState(sync_engine.clone()))
-        .manage(ScreenshotCache(Mutex::new(None)))
+        .manage(ScreenshotCache(screenshot_cache.clone()))
         .setup(move |app| {
             info!("Tauri app setup starting...");
             let handle = app.handle().clone();
+            
             // 注册全局热键
-            if let Err(e) = screenshot::hotkey::register_hotkeys(&handle) {
+            if let Err(e) = screenshot::hotkey::register_hotkeys(&handle, screenshot_cache.clone()) {
                 error!("Failed to register global hotkeys: {}", e);
+            } else {
+                info!("Global hotkeys registered successfully");
             }
+            
             // 设置同步引擎的 AppHandle
             sync_engine.set_app_handle(handle.clone());
+            
             // 设置提醒调度器的 AppHandle
             reminder_scheduler.set_app_handle(handle.clone());
+            
             // 启动提醒调度器
             reminder_scheduler.start();
+            
             // 启动同步引擎（如果已配置）
             {
                 let db_path = db::init::get_database_path();
@@ -100,10 +115,17 @@ pub fn run() {
                     }
                 }
             }
+            
             // 监听截屏触发事件
             app.listen("screenshot:trigger", move |_event| {
                 info!("Received screenshot:trigger event");
             });
+            
+            // 监听截图错误事件
+            app.listen("screenshot:error", move |_event| {
+                info!("Received screenshot:error event");
+            });
+            
             info!("Tauri app setup completed");
             Ok(())
         })

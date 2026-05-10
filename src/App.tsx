@@ -18,6 +18,12 @@ import { initTheme } from '@/utils/theme';
 import { TaskStatus } from '@/types';
 import type { ScreenshotEvent, ReminderEvent, SyncEvent } from '@/types';
 
+interface ScreenshotTriggerEvent {
+  mode: string;
+  base64: string;
+  size: number;
+}
+
 const App: React.FC = () => {
   const [isTauri, setIsTauri] = useState(false);
   const [activeReminder, setActiveReminder] = useState<{
@@ -25,23 +31,19 @@ const App: React.FC = () => {
     task: import('@/types').Task;
   } | null>(null);
 
-  // Initialize theme
   useEffect(() => {
     initTheme();
   }, []);
 
-  // Check if running in Tauri
   useEffect(() => {
     setIsTauri(!!window.__TAURI__);
   }, []);
 
-  // Load settings
   const { loadSettings } = useSettingsStore();
   useEffect(() => {
     loadSettings();
   }, [loadSettings]);
 
-  // Register Tauri event listeners
   useEffect(() => {
     if (!isTauri) return;
 
@@ -49,13 +51,16 @@ const App: React.FC = () => {
     const unlisteners: Array<() => void> = [];
 
     // 监听热键触发的截图事件（来自后端 hotkey.rs）
-    listen<{ mode: string }>('screenshot:trigger', async (event) => {
-      const mode = event.payload?.mode || 'full';
-      console.log('Hotkey screenshot triggered, mode:', mode);
+    listen<ScreenshotTriggerEvent>('screenshot:trigger', async (event) => {
+      console.log('Hotkey screenshot triggered:', event.payload);
       try {
-        const imageBase64 = await screenshotApi.triggerScreenshot(mode);
         const { analyzeScreenshot } = useAIStore.getState();
-        analyzeScreenshot(imageBase64);
+        // base64 已经在后端生成，直接使用
+        if (event.payload?.base64) {
+          await analyzeScreenshot(event.payload.base64);
+        } else {
+          console.error('No base64 data in screenshot event');
+        }
       } catch (error) {
         console.error('Hotkey screenshot failed:', error);
       }
@@ -63,10 +68,21 @@ const App: React.FC = () => {
       unlisteners.push(unlisten);
     });
 
+    // 监听截图错误事件
+    listen<{ error: string }>('screenshot:error', async (event) => {
+      console.error('Screenshot error:', event.payload);
+      alert(`截图失败: ${event.payload?.error || '未知错误'}`);
+    }).then((unlisten) => {
+      unlisteners.push(unlisten);
+    });
+
     registerEventListeners({
       screenshot: (event: ScreenshotEvent) => {
+        console.log('Screenshot captured via API:', event);
         const { analyzeScreenshot } = useAIStore.getState();
-        analyzeScreenshot(event.image_base64);
+        if (event.image_base64) {
+          analyzeScreenshot(event.image_base64);
+        }
       },
       reminder: (event: ReminderEvent) => {
         setActiveReminder({

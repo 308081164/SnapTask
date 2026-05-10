@@ -1,6 +1,6 @@
 [package]
 name = "snaptask"
-version = "1.3.0"
+version = "1.4.0"
 description = "SnapTask - AI-powered task management with screenshot capture"
 authors = ["SnapTask Team"]
 edition = "2021"

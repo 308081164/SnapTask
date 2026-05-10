@@ -5,6 +5,9 @@ use std::io::Cursor;
 #[cfg(any(target_os = "macos", target_os = "windows"))]
 use std::process::Command;
 
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
 /// 全屏截屏，返回 PNG 编码的 Vec<u8>
 pub fn capture_screen() -> Result<Vec<u8>> {
     #[cfg(target_os = "macos")]

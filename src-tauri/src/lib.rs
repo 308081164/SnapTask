@@ -3,6 +3,7 @@ pub mod screenshot;
 pub mod ai;
 pub mod reminder;
 pub mod sync;
+pub mod tray;
 pub mod commands;
 use std::sync::{Arc, Mutex};
 use tauri::Listener;
@@ -77,6 +78,13 @@ pub fn run() {
         .setup(move |app| {
             info!("Tauri app setup starting...");
             let handle = app.handle().clone();
+            
+            // 设置系统托盘
+            if let Err(e) = tray::setup_system_tray(&handle) {
+                error!("Failed to setup system tray: {}", e);
+            } else {
+                info!("System tray setup successfully");
+            }
             
             // 注册全局热键
             if let Err(e) = screenshot::hotkey::register_hotkeys(&handle, screenshot_cache.clone()) {

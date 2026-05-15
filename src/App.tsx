@@ -6,6 +6,7 @@ import TimelinePage from '@/pages/TimelinePage';
 import CalendarPage from '@/pages/CalendarPage';
 import SettingsPage from '@/pages/SettingsPage';
 import FloatingCardPage from '@/pages/FloatingCardPage';
+import ScreenshotSelectPage from '@/pages/ScreenshotSelectPage';
 import { ErrorBoundary } from '@/components/Common/ErrorBoundary';
 import { ReminderToast } from '@/components/Reminder/ReminderToast';
 import { useTaskStore } from '@/stores/taskStore';
@@ -63,6 +64,18 @@ const App: React.FC = () => {
         }
       } catch (error) {
         console.error('Hotkey screenshot failed:', error);
+      }
+    }).then((unlisten) => {
+      unlisteners.push(unlisten);
+    });
+
+    // 监听显示区域选择窗口的事件
+    listen('screenshot:show-select', async () => {
+      console.log('Show screenshot select window');
+      try {
+        await screenshotApi.showSelectWindow();
+      } catch (error) {
+        console.error('Failed to show select window:', error);
       }
     }).then((unlisten) => {
       unlisteners.push(unlisten);
@@ -129,6 +142,9 @@ const App: React.FC = () => {
         <Routes>
           {/* Floating card window (separate Tauri window) */}
           <Route path="/floating" element={<FloatingCardPage />} />
+          
+          {/* Screenshot select window (separate Tauri window) */}
+          <Route path="/screenshot-select" element={<ScreenshotSelectPage />} />
 
           {/* Main app */}
           <Route path="/" element={<MainLayout />}>

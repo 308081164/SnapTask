@@ -174,6 +174,14 @@ export const screenshotApi = {
     return invokeCommand('trigger_screenshot', { mode: mode || 'full' });
   },
 
+  captureArea(x: number, y: number, width: number, height: number): Promise<string> {
+    return invokeCommand('capture_area', { x, y, width, height });
+  },
+
+  showSelectWindow(): Promise<void> {
+    return invokeCommand('show_select_window');
+  },
+
   getScreenshot(): Promise<string> {
     return invokeCommand('get_screenshot');
   },

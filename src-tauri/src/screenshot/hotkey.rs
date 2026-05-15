@@ -1,4 +1,4 @@
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutEvent};
 use log::{info, error};
 use crate::screenshot::capture;
@@ -11,38 +11,22 @@ pub struct ScreenshotCache(pub Arc<Mutex<Option<Vec<u8>>>>);
 /// 注册全局快捷键
 /// 使用 Ctrl + 数字键盘组合，几乎不与任何系统/应用热键冲突
 pub fn register_hotkeys(app: &AppHandle, cache: Arc<Mutex<Option<Vec<u8>>>>) -> Result<(), Box<dyn std::error::Error>> {
-    // Ctrl+Numpad1: 区域截图快捷键
+    // Ctrl+Numpad1: 区域截图 - 显示选择窗口
     let area_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad1);
     if let Err(e) = app.global_shortcut().on_shortcut(area_shortcut, {
-        let cache = cache.clone();
+        let app_clone = app.clone();
         move |_app: &AppHandle, _shortcut, _event: ShortcutEvent| {
-            info!("Hotkey triggered: area screenshot (Ctrl+Numpad1)");
-            match capture::capture_screen() {
-                Ok(data) => {
-                    // 缓存截图
-                    if let Ok(mut c) = cache.lock() {
-                        *c = Some(data.clone());
-                    }
-                    // 编码为 base64
-                    let base64_str = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &data);
-                    // 发送到前端
-                    if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({
-                        "mode": "area",
-                        "base64": base64_str,
-                        "size": data.len(),
-                    })) {
-                        error!("Failed to emit screenshot:trigger event: {}", e);
-                    }
-                    info!("Area screenshot captured: {} bytes", data.len());
+            info!("Hotkey triggered: show screenshot select (Ctrl+Numpad1)");
+            // 显示区域选择窗口
+            if let Some(window) = app_clone.get_webview_window("screenshot-select") {
+                if let Err(e) = window.show() {
+                    error!("Failed to show screenshot select window: {}", e);
                 }
-                Err(e) => {
-                    error!("Failed to capture screenshot: {}", e);
-                    if let Err(e) = _app.emit("screenshot:error", serde_json::json!({
-                        "error": format!("截屏失败: {}", e),
-                    })) {
-                        error!("Failed to emit screenshot:error event: {}", e);
-                    }
+                if let Err(e) = window.set_focus() {
+                    error!("Failed to focus screenshot select window: {}", e);
                 }
+            } else {
+                error!("Screenshot select window not found");
             }
         }
     }) {
@@ -53,6 +37,7 @@ pub fn register_hotkeys(app: &AppHandle, cache: Arc<Mutex<Option<Vec<u8>>>>) -> 
     let full_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad2);
     if let Err(e) = app.global_shortcut().on_shortcut(full_shortcut, {
         let cache = cache.clone();
+        let app_clone = app.clone();
         move |_app: &AppHandle, _shortcut, _event: ShortcutEvent| {
             info!("Hotkey triggered: full screenshot (Ctrl+Numpad2)");
             match capture::capture_screen() {
@@ -64,7 +49,7 @@ pub fn register_hotkeys(app: &AppHandle, cache: Arc<Mutex<Option<Vec<u8>>>>) -> 
                     // 编码为 base64
                     let base64_str = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &data);
                     // 发送到前端
-                    if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({
+                    if let Err(e) = app_clone.emit("screenshot:trigger", serde_json::json!({
                         "mode": "full",
                         "base64": base64_str,
                         "size": data.len(),
@@ -75,7 +60,7 @@ pub fn register_hotkeys(app: &AppHandle, cache: Arc<Mutex<Option<Vec<u8>>>>) -> 
                 }
                 Err(e) => {
                     error!("Failed to capture screenshot: {}", e);
-                    if let Err(e) = _app.emit("screenshot:error", serde_json::json!({
+                    if let Err(e) = app_clone.emit("screenshot:error", serde_json::json!({
                         "error": format!("截屏失败: {}", e),
                     })) {
                         error!("Failed to emit screenshot:error event: {}", e);
@@ -91,6 +76,7 @@ pub fn register_hotkeys(app: &AppHandle, cache: Arc<Mutex<Option<Vec<u8>>>>) -> 
     let window_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Numpad3);
     if let Err(e) = app.global_shortcut().on_shortcut(window_shortcut, {
         let cache = cache.clone();
+        let app_clone = app.clone();
         move |_app: &AppHandle, _shortcut, _event: ShortcutEvent| {
             info!("Hotkey triggered: window screenshot (Ctrl+Numpad3)");
             match capture::capture_window() {
@@ -102,7 +88,7 @@ pub fn register_hotkeys(app: &AppHandle, cache: Arc<Mutex<Option<Vec<u8>>>>) -> 
                     // 编码为 base64
                     let base64_str = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &data);
                     // 发送到前端
-                    if let Err(e) = _app.emit("screenshot:trigger", serde_json::json!({
+                    if let Err(e) = app_clone.emit("screenshot:trigger", serde_json::json!({
                         "mode": "window",
                         "base64": base64_str,
                         "size": data.len(),
@@ -113,7 +99,7 @@ pub fn register_hotkeys(app: &AppHandle, cache: Arc<Mutex<Option<Vec<u8>>>>) -> 
                 }
                 Err(e) => {
                     error!("Failed to capture screenshot: {}", e);
-                    if let Err(e) = _app.emit("screenshot:error", serde_json::json!({
+                    if let Err(e) = app_clone.emit("screenshot:error", serde_json::json!({
                         "error": format!("截屏失败: {}", e),
                     })) {
                         error!("Failed to emit screenshot:error event: {}", e);

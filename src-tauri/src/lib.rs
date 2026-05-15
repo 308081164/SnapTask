@@ -15,7 +15,7 @@ use commands::project_commands::{create_project, list_projects, update_project, 
 use commands::ai_commands::{analyze_screenshot, confirm_analysis, get_ai_config, update_ai_config};
 use commands::reminder_commands::{create_reminder, list_reminders, update_reminder, delete_reminder};
 use commands::sync_commands::{SyncEngineState, trigger_sync, get_sync_status, get_sync_config, update_sync_config};
-use commands::screenshot_commands::{ScreenshotCache, trigger_screenshot, get_screenshot};
+use commands::screenshot_commands::{ScreenshotCache, trigger_screenshot, get_screenshot, capture_area, show_select_window};
 use commands::window_commands::{toggle_floating_card, show_floating_card, hide_floating_card, is_floating_card_visible};
 use commands::settings_commands::{get_settings, update_settings};
 use sync::engine::SyncEngine;
@@ -24,8 +24,7 @@ use reminder::scheduler::ReminderScheduler;
 /// Tauri 应用入口
 pub fn run() {
     // 初始化日志（使用 try_init 避免与其他 logger 冲突导致 panic）
-    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
-        .try_init();
+    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).try_init();
     info!("SnapTask starting...");
     
     // 初始化数据库
@@ -172,9 +171,11 @@ pub fn run() {
             get_sync_status,
             get_sync_config,
             update_sync_config,
-            // 截屏命令
+            // 截图命令
             trigger_screenshot,
             get_screenshot,
+            capture_area,
+            show_select_window,
             // 窗口命令
             toggle_floating_card,
             show_floating_card,

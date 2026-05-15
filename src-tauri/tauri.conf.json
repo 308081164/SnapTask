@@ -38,15 +38,28 @@
         "x": 50,
         "y": 50,
         "visible": false
+      },
+      {
+        "title": "SnapTask - 截图选择",
+        "label": "screenshot-select",
+        "url": "/#/screenshot-select",
+        "width": 1920,
+        "height": 1080,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "center": false,
+        "x": 0,
+        "y": 0,
+        "visible": false
       }
     ],
     "security": {
       "csp": null
-    },
-    "trayIcon": {
-      "iconPath": "icons/icon.png",
-      "iconAsTemplate": false,
-      "id": "main-tray"
     }
   },
   "bundle": {
